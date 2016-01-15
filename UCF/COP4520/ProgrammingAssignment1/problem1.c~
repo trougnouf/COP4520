@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#define MAXNUM 10
-#define MAXTHREADS 1
+#define MAXNUM 100
+#define MAXTHREADS 8
 
 void* thread_compositeFinder(void* args);
 uint8_t * isComposite;
 uint32_t nextPrime(uint32_t curPrime);
 
 struct fiveBytes {
-	uint32_t curValue;
+	volatile uint32_t curValue;
 	volatile uint32_t isWaiting;
 };
 
@@ -21,7 +21,7 @@ int main()
 	isComposite = (uint8_t*) calloc(MAXNUM, 1);
 	isComposite[0] = 1;
 	pthread_t threads[MAXTHREADS];
-	struct fiveBytes threadData[MAXTHREADS];
+	volatile struct fiveBytes threadData[MAXTHREADS];
 	for(uint8_t i=0; i<MAXTHREADS; i++)
 	{
 		curPrime = nextPrime(curPrime);
@@ -52,7 +52,7 @@ int main()
 		pthread_join(threads[i], NULL);
 	}
 
-	for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", isComposite[i]);
+	for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", i, isComposite[i]);
 }
 
 void* thread_compositeFinder(void* args)
@@ -77,6 +77,7 @@ void* thread_compositeFinder(void* args)
 
 uint32_t nextPrime(uint32_t curPrime)
 {
+	if(!curPrime)	return 0;
 	for(uint32_t i = curPrime+1; curPrime < MAXNUM; i++)
 		if(!isComposite[i])	return i;
 	return 0;
