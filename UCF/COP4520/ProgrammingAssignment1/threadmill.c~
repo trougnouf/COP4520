@@ -44,7 +44,7 @@ int main(void)
 	int value = 7;
 	pthread_t threadone;
 	pthread_create(&threadone, NULL, thread_dothethings, (void *) &structone);
-	for(int i=0; i<99999; i++)	{}
+	for(int i=0; i<9999; i++)	{}
 	printf("%u\n", structone.isWaiting);
 	pthread_join(threadone, NULL);
 }

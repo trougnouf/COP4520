@@ -52,7 +52,7 @@ int main()
 		pthread_join(threads[i], NULL);
 	}
 
-	for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", i, isComposite[i]);
+	for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", isComposite[i]);
 }
 
 void* thread_compositeFinder(void* args)
