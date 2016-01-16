@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
 #define MAXNUM 100000001
 #define MAXTHREADS 8
 
@@ -16,6 +17,7 @@ struct fiveBytes {
 
 int main()
 {
+	clock_t begTime = clock();
 	uint32_t curPrime = 1;
 	// initialize empty array of 10^8 characters, threads, and their data
 	isComposite = (uint8_t*) calloc(MAXNUM, 1);
@@ -46,13 +48,12 @@ int main()
 	}
 	
 	// make all threads commit suicide
-	for(uint8_t i = 0; i < MAXTHREADS; i++)
-	{
-		threadData[i].curValue = 0;
-		pthread_join(threads[i], NULL);
-	}
+	for(uint8_t i = 0; i < MAXTHREADS; i++)	threadData[i].curValue = 0;
+	for(uint8_t i = 0; i < MAXTHREADS; i++)	pthread_join(threads[i], NULL);
+	
+	printResults(begTime);
 
-	for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", i, isComposite[i]);
+	//for(uint32_t i=0; i<MAXNUM; i++)	printf("%u:\t%u\n", i, isComposite[i]);
 }
 
 void* thread_compositeFinder(void* args)
@@ -81,6 +82,12 @@ uint32_t nextPrime(uint32_t curPrime)
 	for(uint32_t i = curPrime+1; curPrime < MAXNUM; i++)
 		if(!isComposite[i])	return i;
 	return 0;
+}
+
+void printResults()
+{
+	printf();
+	
 }
 
 /*
