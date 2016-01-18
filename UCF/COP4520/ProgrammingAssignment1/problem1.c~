@@ -4,8 +4,12 @@
 #include <stdint.h>
 #include <sys/time.h>
 #define MAXNUM 100000001
-#define MAXTHREADS 1
+#define MAXTHREADS 16
 #define TESTING 1	// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
+
+/*
+This program computes the prime numbers located between 2 and MAXNUM using MAXTHREADS threads. The last ten prime numbers are display, but the complete list can be sent to STDOUT by uncommenting the end of the main function
+*/
 
 void* thread_compositeFinder(void* args);	// thread
 

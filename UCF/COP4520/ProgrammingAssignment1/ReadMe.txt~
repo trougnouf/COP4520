@@ -8,6 +8,9 @@ $	gcc -lpthread  problem1.c && ./a.out >> primes.txt
 Older versions of GCC default to -std=gnu89. If you are using a version of GCC prior to GCC 5, you must specify -std=gnu11 as follow:
 $	gcc -lpthread -std=gnu11 problem1.c && ./a.out >> primes.txt
 
+You may use GCC optimizations as follow:
+$	gcc -lpthread -march=native -O2 problem1.c && ./a.out >> Benchmark.txt
+
 * Summary *
 
 This program uses the "Sieve of Eratosthenes" algorithm to find all prime numbers. It was first developed as a standard single-thread program.
@@ -19,14 +22,12 @@ A structure containing the variables "curValue" and "isWaiting" is created for e
 Each thread runs an infinity loop that ends when "curValue" is set to zero. Whenever "isWaiting" is set to false, the thread sets the "isComposite" boolean of every multiple of "curValue" to true, then switches the "isWaiting" flag back to true. The main thread looks for waiting threads, gives them a new "curValue" (using the nextPrime function), and resets the "isWaiting" flag to 1.
 
 Benchmarking:
-Using MAXNUM 100000001 (10^8, excluding 0)
 
-Using 8 threads:
-gcc -lpthread  problem1.c && ./a.out
-Execution time: 5.111911s
-Found 6260293 primes.
-Sum of primes = 2387434306
-Top ten maximum primes: 99999787, 99999821, 99999827, 99999839, 99999847, 99999931, 99999941, 99999959, 99999971, 99999989
+1 thread : 5.9462s (n=10)	100% speed
+2 threads: 4.0886s (n=6)	145%
+4 threads: 2.9888s (n=9)	199%
+7 threads: 2.8629s (n=10)	208%
+8 threads: 3.2755s (n=10)	182%
 
 Result should be 5,761,455 at 10^8
 
