@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #define MAXNUM 100000001
 #define MAXTHREADS 4
+#define TESTING 1
 
 void* thread_compositeFinder(void* args);	// thread
 
@@ -14,6 +15,7 @@ volatile uint8_t * isComposite;				// global array
 uint32_t nextPrime(uint32_t curPrime);		
 void printResults(struct timeval * begTime);
 double getTimeElapsed(struct timeval * begTime);
+void printTime();
 
 struct fiveBytes {
 	volatile uint32_t curValue;
@@ -133,14 +135,23 @@ void printResults(struct timeval * begTime)
 				sumOfPrimes += i;
 			}
 	}
-	printf(	"Execution time: %fs\n",
-		getTimeElapsed(begTime));
-	printf("Found %u primes.\n", numOfPrimes);
-	printf("Sum of primes = %u\n", sumOfPrimes);
-	printf("Top ten maximum primes: ");
-	for(int8_t i = 9; i >= 0; i--)
-		printf("%u%s", maxPrimes[i], i?", ":"\n");
+	if(!TESTING)
+	{
+		printf(	"Execution time: %fs\n",
+			getTimeElapsed(begTime));
+		printf("Found %u primes.\n", numOfPrimes);
+		printf("Sum of primes = %u\n", sumOfPrimes);
+		printf("Top ten maximum primes: ");
+		for(int8_t i = 9; i >= 0; i--)
+			printf("%u%s", maxPrimes[i], i?", ":"\n");
+	}
+	else
+	{
+		printTime();
+		printf("\tThr= %u\tNum= %u\tRes= %u\tPerf= %f\n", MAXTHREADS, MAXNUM, numOfPrimes, getTimeElapsed(begTime));
+	}
 }
+
 
 double getTimeElapsed(struct timeval * begTime)
 {
@@ -148,4 +159,22 @@ double getTimeElapsed(struct timeval * begTime)
 	gettimeofday(&curTime, NULL);
 	return (double)	((curTime.tv_usec - (*begTime).tv_usec)/1000000. +
 			curTime.tv_sec - (*begTime).tv_sec);
+}
+
+/*
+Source: Hamid Nazari
+http://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
+Used for testing.
+*/
+void printTime()	
+{
+	time_t timer;
+	char buffer[26];
+	struct tm* tm_info;
+
+	time(&timer);
+	tm_info = localtime(&timer);
+
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+	printf(buffer);
 }
