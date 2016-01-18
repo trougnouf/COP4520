@@ -8,6 +8,9 @@ $	gcc -lpthread  problem1.c && ./a.out >> primes.txt
 Older versions of GCC default to -std=gnu89. If you are using a version of GCC prior to GCC 5, you must specify -std=gnu11 as follow:
 $	gcc -lpthread -std=gnu11 problem1.c && ./a.out >> primes.txt
 
+You may use GCC optimizations as follow:
+$	gcc -lpthread -march=native -O2 problem1.c && ./a.out >> Benchmark.txt
+
 * Summary *
 
 This program uses the "Sieve of Eratosthenes" algorithm to find all prime numbers. It was first developed as a standard single-thread program.

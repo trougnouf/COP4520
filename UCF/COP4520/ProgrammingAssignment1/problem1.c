@@ -4,15 +4,15 @@
 #include <stdint.h>
 #include <sys/time.h>
 #define MAXNUM 100000001
-#define MAXTHREADS 4
-#define TESTING 1
+#define MAXTHREADS 8
+#define TESTING 1	// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
 
 void* thread_compositeFinder(void* args);	// thread
 
-volatile uint8_t * isComposite;				// global array
+uint8_t * isComposite;				// global array
 
 						// function prototypes
-uint32_t nextPrime(uint32_t curPrime);		
+uint32_t nextPrime(uint32_t * curPrime);		
 void printResults(struct timeval * begTime);
 double getTimeElapsed(struct timeval * begTime);
 void printTime();
@@ -31,16 +31,16 @@ int main()
 	isComposite = (uint8_t*) calloc(MAXNUM, 1);
 	isComposite[0] = 1;
 	pthread_t threads[MAXTHREADS];
-	volatile struct fiveBytes threadData[MAXTHREADS];
+	struct fiveBytes threadData[MAXTHREADS];
 	for(uint8_t i=0; i<MAXTHREADS; i++)
 	{
-		curPrime = nextPrime(curPrime);
+		curPrime = nextPrime(&curPrime);
 		threadData[i].curValue = curPrime;
 		threadData[i].isWaiting = 0;
 		pthread_create(	&threads[i], NULL, thread_compositeFinder,
 				(void *) &threadData[i]);
 	}	
-	curPrime = nextPrime(curPrime);
+	curPrime = nextPrime(&curPrime);
 	// loop over each thread, give out work when necessary
 	while(curPrime)
 	{
@@ -50,7 +50,7 @@ int main()
 			{
 				threadData[i].curValue = curPrime;
 				threadData[i].isWaiting = 0;
-				curPrime = nextPrime(curPrime);
+				curPrime = nextPrime(&curPrime);
 			}
 		}
 	}
@@ -59,8 +59,9 @@ int main()
 	for(uint8_t i = 0; i < MAXTHREADS; i++)
 	{
 		threadData[i].curValue = 0;
-		pthread_join(threads[i], NULL);
+		
 	}
+	for(uint8_t i = 0; i < MAXTHREADS; i++)	pthread_join(threads[i], NULL);
 	
 	printResults(&begTime);
 
@@ -71,46 +72,38 @@ int main()
 	*/
 }
 
+
+// precise function
 void* thread_compositeFinder(void* args)
 {
-	volatile uint32_t cur;
-	volatile uint8_t isWaiting;
+	uint32_t cur;
+	uint8_t isWaiting;
 	for(;;)
 	{
-		/*
-		1 ctrl sends iswaiting
-			if current is different, then continue (or wait?)
-		*/
-		if(cur != (*(struct fiveBytes*)args).curValue)
-		{
-			cur = (*(struct fiveBytes*)args).curValue;
-			continue;
-		}
+		
+		isWaiting = (*(struct fiveBytes*)args).isWaiting;
+		cur = (*(struct fiveBytes*)args).curValue;
 		
 		if(!cur)
 		{
 			pthread_exit(NULL);
 			return NULL;
 		}
-		if(!isWaiting && !((*(struct fiveBytes*)args).isWaiting) )
+		if(!isWaiting)
 		{
+			//printf(" %u ", cur);
 			for(uint32_t i=cur*2; i<MAXNUM; i+=cur)
 				isComposite[i] = 1;
 			(*(struct fiveBytes*)args).isWaiting = 1;
-			isWaiting = 1;
-		}
-		else if(isWaiting != (*(struct fiveBytes*)args).isWaiting)
-		{
-			isWaiting = (*(struct fiveBytes*)args).isWaiting;
 			continue;
 		}
 	}
 }
 
-uint32_t nextPrime(uint32_t curPrime)
+uint32_t nextPrime(uint32_t * curPrime)
 {
-	if(!(curPrime))	return 0;
-	for(uint32_t i = curPrime+1; curPrime < MAXNUM; i++)
+	if(!(*curPrime))	return 0;
+	for(uint32_t i = *curPrime+1; *curPrime < MAXNUM/2; i++)
 		if(!isComposite[i])	return i;
 	return 0;
 }
@@ -120,11 +113,12 @@ void printResults(struct timeval * begTime)
 	uint32_t numOfPrimes = 0;
 	uint64_t sumOfPrimes = 0;
 	uint32_t maxPrimes[10];
-	/*
+	
 	// it takes approximately 0.30s to analyze the results on a single thread
-	printf(	"Execution time: %fs (excluding print statement)\n",
+	if(TESTING == 2)
+		printf(	"Execution time: %fs (excluding print statement)\n",
 		getTimeElapsed(begTime));
-	*/
+	
 	for(uint32_t i = MAXNUM-1; i > 1; i--)
 	{
 		if(!isComposite[i])
@@ -164,7 +158,7 @@ double getTimeElapsed(struct timeval * begTime)
 /*
 Source: Hamid Nazari
 http://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
-Used for testing.
+Used for testing (TESTING != 0).
 */
 void printTime()	
 {

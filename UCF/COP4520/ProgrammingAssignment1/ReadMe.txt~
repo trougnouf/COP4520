@@ -30,5 +30,5 @@ Top ten maximum primes: 99999787, 99999821, 99999827, 99999839, 99999847, 999999
 
 Result should be 5,761,455 at 10^8
 
-
+Found 5761456 primes. using i=100
 
