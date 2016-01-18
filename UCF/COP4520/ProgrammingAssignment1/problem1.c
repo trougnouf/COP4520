@@ -8,7 +8,9 @@
 #define TESTING 0	// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
 
 /*
-This program computes the prime numbers located between 2 and MAXNUM using MAXTHREADS threads. The last ten prime numbers are display, but the complete list can be sent to STDOUT by uncommenting the end of the main function
+This program computes the prime numbers located between 2 and MAXNUM using 
+MAXTHREADS threads. The last ten prime numbers are display, but the complete
+list can be sent to STDOUT by uncommenting the end of the main function
 */
 
 void* thread_compositeFinder(void* args);	// thread
@@ -146,7 +148,8 @@ void printResults(struct timeval * begTime)
 	else
 	{
 		printTime();
-		printf("\tThr= %u\tNum= %u\tRes= %u\tPerf= %f\n", MAXTHREADS, MAXNUM, numOfPrimes, getTimeElapsed(begTime));
+		printf(	"\tThr= %u\tNum= %u\tRes= %u\tPerf= %f\n", MAXTHREADS,
+			MAXNUM, numOfPrimes, getTimeElapsed(begTime));
 	}
 }
 
