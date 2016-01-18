@@ -3,15 +3,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/time.h>
-#define MAXNUM 100000001
-#define MAXTHREADS 1
+#define MAXNUM 100000007
+#define MAXTHREADS 8
 
 void* thread_compositeFinder(void* args);	// thread
 
 volatile uint8_t * isComposite;				// global array
 
 						// function prototypes
-uint32_t nextPrime(uint32_t * curPrime);		
+uint32_t nextPrime(uint32_t curPrime);		
 void printResults(struct timeval * begTime);
 double getTimeElapsed(struct timeval * begTime);
 
@@ -32,13 +32,14 @@ int main()
 	volatile struct fiveBytes threadData[MAXTHREADS];
 	for(uint8_t i=0; i<MAXTHREADS; i++)
 	{
-		curPrime = nextPrime(&curPrime);
-		threadData[i].isWaiting = 0;
+		curPrime = nextPrime(curPrime);
 		threadData[i].curValue = curPrime;
+		for(int i = 0; i < 10; i++){} // TODO remove this
+		threadData[i].isWaiting = 0;
 		pthread_create(	&threads[i], NULL, thread_compositeFinder,
 				(void *) &threadData[i]);
 	}	
-	curPrime = nextPrime(&curPrime);
+	curPrime = nextPrime(curPrime);
 	// loop over each thread, give out work when necessary
 	while(curPrime)
 	{
@@ -47,8 +48,9 @@ int main()
 			if(threadData[i].isWaiting)
 			{
 				threadData[i].curValue = curPrime;
+				for(int i = 0; i < 10; i++){} // TODO remove this
 				threadData[i].isWaiting = 0;
-				curPrime = nextPrime(&curPrime);
+				curPrime = nextPrime(curPrime);
 			}
 		}
 	}
@@ -71,28 +73,31 @@ int main()
 
 void* thread_compositeFinder(void* args)
 {
-	uint32_t cur;
+	volatile uint32_t cur;
+	volatile uint8_t isWaiting;
 	for(;;)
 	{
 		cur = (*(struct fiveBytes*)args).curValue;
+		isWaiting = (*(struct fiveBytes*)args).isWaiting;
 		if(!cur)
 		{
 			pthread_exit(NULL);
 			return NULL;
 		}
-		else if(!(*(struct fiveBytes*)args).isWaiting)
+		else if(!isWaiting)
 		{
 			for(uint32_t i=cur*2; i<MAXNUM; i+=cur)
 				isComposite[i] = 1;
 			(*(struct fiveBytes*)args).isWaiting = 1;
+			isWaiting = 1;
 		}
 	}
 }
 
-uint32_t nextPrime(uint32_t * curPrime)
+uint32_t nextPrime(uint32_t curPrime)
 {
-	if(!(*curPrime))	return 0;
-	for(uint32_t i = *curPrime+1; *curPrime < MAXNUM; i++)
+	if(!(curPrime))	return 0;
+	for(uint32_t i = curPrime+1; curPrime < MAXNUM; i++)
 		if(!isComposite[i])	return i;
 	return 0;
 }
