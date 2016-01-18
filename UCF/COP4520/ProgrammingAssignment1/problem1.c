@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/time.h>
-#define MAXNUM 100000007
-#define MAXTHREADS 8
+#define MAXNUM 100000001
+#define MAXTHREADS 4
 
 void* thread_compositeFinder(void* args);	// thread
 
@@ -34,7 +34,6 @@ int main()
 	{
 		curPrime = nextPrime(curPrime);
 		threadData[i].curValue = curPrime;
-		for(int i = 0; i < 10; i++){} // TODO remove this
 		threadData[i].isWaiting = 0;
 		pthread_create(	&threads[i], NULL, thread_compositeFinder,
 				(void *) &threadData[i]);
@@ -48,7 +47,6 @@ int main()
 			if(threadData[i].isWaiting)
 			{
 				threadData[i].curValue = curPrime;
-				for(int i = 0; i < 10; i++){} // TODO remove this
 				threadData[i].isWaiting = 0;
 				curPrime = nextPrime(curPrime);
 			}
@@ -77,19 +75,32 @@ void* thread_compositeFinder(void* args)
 	volatile uint8_t isWaiting;
 	for(;;)
 	{
-		cur = (*(struct fiveBytes*)args).curValue;
-		isWaiting = (*(struct fiveBytes*)args).isWaiting;
+		/*
+		1 ctrl sends iswaiting
+			if current is different, then continue (or wait?)
+		*/
+		if(cur != (*(struct fiveBytes*)args).curValue)
+		{
+			cur = (*(struct fiveBytes*)args).curValue;
+			continue;
+		}
+		
 		if(!cur)
 		{
 			pthread_exit(NULL);
 			return NULL;
 		}
-		else if(!isWaiting)
+		if(!isWaiting && !((*(struct fiveBytes*)args).isWaiting) )
 		{
 			for(uint32_t i=cur*2; i<MAXNUM; i+=cur)
 				isComposite[i] = 1;
 			(*(struct fiveBytes*)args).isWaiting = 1;
 			isWaiting = 1;
+		}
+		else if(isWaiting != (*(struct fiveBytes*)args).isWaiting)
+		{
+			isWaiting = (*(struct fiveBytes*)args).isWaiting;
+			continue;
 		}
 	}
 }
