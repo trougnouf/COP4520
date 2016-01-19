@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <math.h>
-#define MAXNUM 1000000001	// Pick an odd number and add 1
+#define MAXNUM 100000001	// Pick an odd number and add 1
 #define MAXTHREADS 7		// Not including the main function
 #define TESTING 0		// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
 

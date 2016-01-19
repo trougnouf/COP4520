@@ -33,7 +33,7 @@ void printTime();
 
 struct fiveBytes {
 	volatile uint32_t curValue;
-	volatile uint32_t isWaiting;
+	volatile uint8_t isWaiting;
 };
 
 int main()
