@@ -1,167 +1,98 @@
 #include <pthread.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <sys/time.h>
-//#include <math.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-#define NUMTHREADS 5
-#define NUMCSTICKS 5
+#define NUMTHREADS 5	// 254 max
 
-#define MINDELAY 1
-#define MAXDELAY 60
+#define MAXSLEEP 1
 
 struct chopstick
 {
 	uint8_t location;
-	uint8_t isBusy;
+	uint8_t usedBy;	// UINT8_MAX = no one
 };
 
 struct philosopherData
 {
 	uint8_t location;
 	uint8_t isThinking;
-	struct chopstick * chopsticks;
+	struct chopstick * lChopstick;
+	struct chopstick * rChopstick;
 };
 
 void* thread_philosopher(void* args)
 {
-	uint8_t location = (*(struct philosopherData *)args).location;
-	double nextSwitch;
-
-	//printf(" %u ", location);
+	setbuf(stdout, NULL);
+	srand(time(NULL));
 	struct philosopherData * data = &(*(struct philosopherData *)args);
-	//printf(" %u ", (*data).isThinking);
+	printf("%u is now thinking.\n", (*data).location);
 	
 	for(;;)
 	{
-		if((*data).isThinking)	// thinking
+		if((*data).location == UINT8_MAX)	break;
+		
+		// thinking
+		if((*data).isThinking)
 		{
-			if(isTimeToSwitch(nextSwitch))
-			{
-				printf("%u is now hungry.\n", location);
-				(*data).isThinking = 0; // switch to hungry
-			}
+			sleep(rand() % MAXSLEEP + 1);
+			(*data).isThinking = 0;	// switch to hungry
+			printf("%u is now hungry.\n", (*data).location);
 		}
-		else					// hungry or eating
+		// eating
+		else if(((*(*data).lChopstick).usedBy == (*data).location) &&
+			((*(*data).rChopstick).usedBy == (*data).location))
 		{
-			if(hasChopsticks(data) == 2)	// eating
-			{
-				if(isTimeToSwitch(nextSwitch))	// full
-				{
-					printf("%u is now thinking.\n", location);
-					(*data).isThinking = 1; // switch to thinking
-					releaseSticks(data);
-					nextSwitch = getNextSwitch();
-				}
-			}
-			else	// hungry
-			{
-				getChopsticks(data, hasChopsticks(data)); // switch to eating
-				printf("%u is now eating.\n", location);
-				nextSwitch = getNextSwitch();
-			}
+			printf("%u is now eating.\n", (*data).location);
+			sleep(rand() % MAXSLEEP + 1);
+			printf("%u is now thinking.\n", (*data).location);
+			(*data).isThinking = 1;	// switch to thinking
+			(*(*data).lChopstick).usedBy = UINT8_MAX;
+			(*(*data).rChopstick).usedBy = UINT8_MAX;
+		}
+		// hungry
+		else
+		{
+			if((*(*data).lChopstick).usedBy == UINT8_MAX)
+				(*(*data).lChopstick).usedBy = (*data).location;
+			if((*(*data).rChopstick).usedBy == UINT8_MAX)
+				(*(*data).rChopstick).usedBy = (*data).location;
 		}
 	}
-	//static uint8_t location;
-	//uint8_t isThinking;
-	//struct chopstick * chopsticks[NUMCSTICKS];
+		
 	pthread_exit(NULL);
 }
 
 int main()
 {
 	// initialize chopsticks and philosophers
-	struct chopstick chopsticks[NUMCSTICKS];
-	for(uint8_t i = 0; i < NUMCSTICKS; i++)
+	struct chopstick chopsticks[NUMTHREADS];
+	for(uint8_t i = 0; i < NUMTHREADS; i++)
 	{
 		chopsticks[i].location = i;
-		chopsticks[i].isBusy = 0;
+		chopsticks[i].usedBy = UINT8_MAX;
 	}
 	struct philosopherData philosophersD[NUMTHREADS];
 	pthread_t philosophersT[NUMTHREADS];
 	for(uint8_t i = 0; i < NUMTHREADS; i++)
 	{
 		philosophersD[i].location = i;
-		philosophersD[i].isThinking = 0;
-		philosophersD[i].chopsticks = chopsticks;
+		philosophersD[i].isThinking = 1;
+		philosophersD[i].lChopstick = &chopsticks[i];
+		philosophersD[i].rChopstick = &chopsticks[i==(NUMTHREADS-1)?0:i+1];
 		pthread_create(&philosophersT[i], NULL, thread_philosopher, (void *)&philosophersD[i]);
 	}
 	
+	// 'n' + enter = end
+	char terminator;
+	while(terminator != 'n')	terminator = getchar();
+	for(uint8_t i = 0; i < NUMTHREADS; i++)
+		philosophersD[i].location = UINT8_MAX;
 	
 	// wait for threads to end
 	for(uint8_t i=0; i<NUMTHREADS; i++)
 	{
 		pthread_join(philosophersT[i], NULL);
-	}
-
-
-}
-
-// compare time to switch to current time
-uint8_t isTimeToSwitch(double targetT)
-{
-	struct timeval curTime;
-	gettimeofday(&curTime, NULL);
-	if(curTime.tv_sec > targetT)	return 1;
-	return 0;
-}
-
-double getNextSwitch()
-{
-	struct timeval curTime;
-	gettimeofday(&curTime, NULL);
-	return curTime.tv_sec + 5;	// TODO: change to  + random number (not specified in instructions)
-}
-
-uint8_t hasChopsticks(struct philosopherData * phiDat)
-{
-	struct chopstick * chopsticks = (*phiDat).chopsticks;
-	uint8_t numSticks = 0;
-	for(uint8_t i=0; i<NUMCSTICKS; i++)
-	{
-		if(chopsticks[i].location == (*phiDat).location)	numSticks++;
-	}
-	return numSticks;
-}
-
-void getChopsticks(struct philosopherData * phiDat, uint8_t curChopsticks)
-{
-	struct chopstick * chopsticks = (*phiDat).chopsticks;
-	uint8_t chopsticksNeeded = curChopsticks?1:2;
-	while(chopsticksNeeded)
-	{
-		uint8_t closestSeat = (*phiDat).location;
-		for (uint8_t i = 1; i<=NUMTHREADS; i++)
-		{
-			closestSeat = getClosestSeat(closestSeat, i);
-			if(!chopsticks[closestSeat].isBusy)
-			{
-				chopsticks[closestSeat].isBusy = 1;
-				chopsticks[closestSeat].location = (*phiDat).location;
-				chopsticksNeeded--;
-				break;
-			}
-		}	
-	}
-}
-
-uint8_t getClosestSeat(uint8_t curSeat, uint8_t i)
-{
-	int8_t result = curSeat + ((i%2)?-1:1)*i;
-	if(result >= NUMTHREADS)	result -= NUMTHREADS;
-	else if(result < 0)			result += NUMTHREADS;
-	return (uint8_t) result;
-}
-
-void releaseSticks(struct philosopherData * phiDat)
-{
-	struct chopstick * chopsticks = (*phiDat).chopsticks;
-	for(uint8_t i = 0; i < NUMCSTICKS; i++)
-	{
-		if(chopsticks[i].location == (*phiDat).location)
-		{
-			chopsticks[i].isBusy = 0;
-		}
 	}
 }
