@@ -54,10 +54,12 @@ void* thread_philosopher(void* args)
 		// hungry
 		else
 		{
-			if((*(*data).lChopstick).usedBy == UINT8_MAX)
+			if(	(*(*data).lChopstick).usedBy == UINT8_MAX &&
+				(*(*data).rChopstick).usedBy == UINT8_MAX)
+			{
 				(*(*data).lChopstick).usedBy = (*data).location;
-			if((*(*data).rChopstick).usedBy == UINT8_MAX)
 				(*(*data).rChopstick).usedBy = (*data).location;
+			}
 		}
 	}
 		

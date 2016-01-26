@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NUMTHREADS 5	// 254 max
+#define NUMTHREADS 23	// 254 max
 
 #define MAXSLEEP 5
 
@@ -12,6 +12,7 @@ struct chopstick
 {
 	uint8_t location;
 	uint8_t usedBy;	// UINT8_MAX = no one
+	uint8_t lastUser;
 };
 
 struct philosopherData
@@ -54,10 +55,16 @@ void* thread_philosopher(void* args)
 		// hungry
 		else
 		{
-			if((*(*data).lChopstick).usedBy == UINT8_MAX)
+			if(	(*(*data).lChopstick).usedBy == UINT8_MAX &&
+				(*(*data).rChopstick).usedBy == UINT8_MAX &&
+				(*(*data).lChopstick).lastUser != (*data).location &&
+				(*(*data).rChopstick).lastUser != (*data).location)
+			{
 				(*(*data).lChopstick).usedBy = (*data).location;
-			if((*(*data).rChopstick).usedBy == UINT8_MAX)
 				(*(*data).rChopstick).usedBy = (*data).location;
+				(*(*data).lChopstick).lastUser = (*data).location;
+				(*(*data).rChopstick).lastUser = (*data).location;
+			}
 		}
 	}
 		
