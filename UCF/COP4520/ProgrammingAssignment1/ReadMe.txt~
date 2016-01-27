@@ -47,8 +47,6 @@ $	while true; do 'gcc -lpthread problem1.c && ./a.out'; sleep .5; done >> P1-i7-
 8 threads: 3.2755s (n=10)	182%
 16 threads: 4.1422s (n=10)	144%
 
-$	while true; do gcc -lpthread -march=native -O2 problem1.c && ./a.out; sleep .5; done >> P1-i7-optimized.benchmark
-
 Result should be 5,761,455 at 10^8
 
 Found 5761456 primes. using i=100

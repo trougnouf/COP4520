@@ -5,8 +5,8 @@
 #include <sys/time.h>
 #include <math.h>
 #define MAXNUM 100000001	// Pick an odd number and add 1
-#define MAXTHREADS 8		// Not including the main function. Fastest when MAXTHREADS = CPU threads - 1
-#define TESTING 2		// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
+#define MAXTHREADS 10		// Not including the main function. Fastest when MAXTHREADS = CPU threads - 1
+#define TESTING 1		// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
 
 /*
 This program computes the prime numbers located between 2 and MAXNUM using 

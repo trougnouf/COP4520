@@ -5,8 +5,8 @@
 #include <sys/time.h>
 #include <math.h>
 #define MAXNUM 100000001	// Pick an odd number and add 1
-#define MAXTHREADS 7		// Not including the main function
-#define TESTING 0		// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
+#define MAXTHREADS 9		// Not including the main function. Fastest when MAXTHREADS = CPU threads - 1
+#define TESTING 1		// 0=Run, 1=Testing, 2=Testing+ExtendedRuntime
 
 /*
 This program computes the prime numbers located between 2 and MAXNUM using 
@@ -33,7 +33,7 @@ void printTime();
 
 struct fiveBytes {
 	volatile uint32_t curValue;
-	volatile uint32_t isWaiting;
+	volatile uint8_t isWaiting;
 };
 
 int main()
@@ -132,7 +132,7 @@ void printResults(struct timeval * begTime)
 	uint64_t sumOfPrimes = 0;
 	uint32_t maxPrimes[10];
 	
-	// it takes approximately 0.30s to analyze the results on a single thread
+	// it takes approximately 0.03s - 0.15s to analyze the results on a single thread (-O0 - -O2). This can be optimized using multiple threads.
 	if(TESTING == 2)
 		printf(	"Execution time: %fs (excluding print statement)\n",
 		getTimeElapsed(begTime));
