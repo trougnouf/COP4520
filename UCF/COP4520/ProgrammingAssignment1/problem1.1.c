@@ -98,7 +98,7 @@ uint32_t findNextPrime(uint32_t * curPrime, uint32_t * searchLimit, uint8_t * is
 			case 2: return 3;
 		}
 	}
-	for(uint32_t i = *curPrime+2; *curPrime < *searchLimit; i+=2)
+	for(uint32_t i = *curPrime+2; i < *searchLimit; i+=2)
 		if(!isComposite[i])	return i;
 	return 0;
 }
