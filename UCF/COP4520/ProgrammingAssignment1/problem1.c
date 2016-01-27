@@ -23,7 +23,7 @@ $ gcc -lpthread -lm -std=gnu11 problem1.c && ./a.out >> primes.txt
 
 void* thread_compositeFinder(void* args);	// thread
 
-uint8_t * isComposite;				// global array
+ptuint8_t * isComposite;				// global array
 
 						// function prototypes
 uint32_t nextPrime(uint32_t * curPrime, uint32_t * searchLimit);		
