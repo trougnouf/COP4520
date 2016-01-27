@@ -116,7 +116,7 @@ int main()
 
 uint32_t findNextPrime(volatile uint32_t * curPrime, uint32_t * searchLimit, volatile uint8_t * isComposite)
 {
-	if(*curPrime == 2 )	return 3;
+	if(*curPrime ==2 )	return 3;
 	for(uint32_t i = *curPrime+2; i < *searchLimit; i+=2)
 		if(!isComposite[i])	return i;
 	return 0;
