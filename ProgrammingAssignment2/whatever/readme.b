@@ -9,17 +9,19 @@ we may never know.
 
 # the SkipTrie, a probabilistically-balanced data structure
 	- wat
+The SkipTrie is a probabilistically-balanced version of a y-fast trie consisting of a very shallow skiplist from which randomly chosen elements are inserted into a hash-table based x-fast trie.
 
+- Skip list: https://en.wikipedia.org/wiki/Skip_list
+
+- X-fast trie: https://en.wikipedia.org/wiki/X-fast_trie
+	"largely as an introduction to y-fast tries"
+- Y-fast trie: https://en.wikipedia.org/wiki/Y-fast_trie
+	more complicated than x-fast
 
 
 
 # atomic primitives: CAS and DCSS instructions
 	
-- CAS: single-word compare-and-swap
-supported in hardware
-	<stdatomic.h>
-	
-
 	
 - DCSS: double-wide double-compare-single-swap
 
@@ -39,6 +41,10 @@ DCAS has its own wikipedia page:
   "Compares two unrelated memory locations with two expected values, and if they're equal, sets both locations to new values. "
   adds newY. No HW instruction either
 
+- CAS: single-word compare-and-swap
+supported in hardware
+	<stdatomic.h>
+
 "some or all DCSS instructions are replaced with CAS
 (by dropping the second guard), the implementation remains
 linearizable and lock-free."
@@ -47,4 +53,6 @@ linearizable and lock-free."
 sign patterns that are implicit in, e.g., [8], and other lock-free
 data structures built from CAS alone"
 [8]: http://www.cse.yorku.ca/~ruppert/papers/lfll.pdf
+
+
 
