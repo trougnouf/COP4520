@@ -18,10 +18,16 @@ The SkipTrie is a probabilistically-balanced version of a y-fast trie consisting
 - Y-fast trie: https://en.wikipedia.org/wiki/Y-fast_trie
 	more complicated than x-fast
 
+The main idea of the SkipTrie is to replace the y-fast trie’s balanced binary trees with a very shallow, truncated skiplist [18] of depth log log u.
+// u is the size of the key space
+// y-fast trie - balanced binary trees = x-fast trie
+
 
 
 # atomic primitives: CAS and DCSS instructions
-	
+
+We probably don't care about this section until ProgrammingAssignment3
+(assignment2 is sequential, ass#3 is concurrent)
 	
 - DCSS: double-wide double-compare-single-swap
 
@@ -54,5 +60,38 @@ sign patterns that are implicit in, e.g., [8], and other lock-free
 data structures built from CAS alone"
 [8]: http://www.cse.yorku.ca/~ruppert/papers/lfll.pdf
 
+
+
+# Insertion
+
+Each key inserted
+into the SkipTrie is first inserted into the skiplist; initially
+it rises in the usual manner, starting at the bottom level
+and tossing a fair coin to determine at each level whether
+to continue on to the next level. If a key rises to the top
+of the truncated skiplist (i.e., to height log log u), we insert
+it into the x-fast trie
+
+
+
+# Deletion
+
+To delete a key, we first delete
+it from the skiplist, and if it was a top-level node, we also
+remove it from the x-fast trie.
+
+
+
+# Data structures:
+- concurrent hash table
+	split-ordered hashing [19]
+- concurrent skiplist
+- doubly-linked list
+- concurrent x-fast trie
+	// "has never been implemented concurrently before"
+	
+	
+	
+2. Skiplist's brief overview
 
 
