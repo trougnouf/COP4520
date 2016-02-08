@@ -1,0 +1,13 @@
+Implement the X-fast trie
+	https://en.wikipedia.org/wiki/X-fast_trie
+	
+	- includes hash table and doubly linked list
+
+Implement the skiplist
+	https://en.wikipedia.org/wiki/Skip_list
+	
+Merge
+	Y-fast trie style
+	https://en.wikipedia.org/wiki/Y-fast_trie
+	
+profit!

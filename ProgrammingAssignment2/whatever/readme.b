@@ -84,8 +84,10 @@ remove it from the x-fast trie.
 
 # Data structures:
 - concurrent hash table
-	split-ordered hashing [19]
+	paper uses split-ordered hashing [19] (concurrent)
+	wikipedia mentions dynamic perfect hashing or cuckoo hashing
 - concurrent skiplist
+	each level is a sorted linked list
 - doubly-linked list
 - concurrent x-fast trie
 	// "has never been implemented concurrently before"
@@ -94,4 +96,65 @@ remove it from the x-fast trie.
 	
 2. Skiplist's brief overview
 
+3. Doubly-linked list
+
+4.
+
+[P6R]:
+The data structure. The concurrent x-fast trie consists of
+a hash table prefixes, mapping prefixes to tree nodes rep-
+resenting them. A tree node n has a single field, n.pointers,
+which stores two pointers n.pointers[0], n.pointers[1] to
+the largest element in the 0-subtree and the smallest element
+in the 1-tree, respectively. Recall that “underneath” the x-
+fast trie we store all keys in a skiplist; the nodes pointed to
+by n.pointers[d] for d ∈ {0, 1} are top-level skiplist nodes.
+A value of n.pointers[d] = null indicates that node n has
+no children in its d-subtree (except possibly new children
+currently being inserted).
+Our goal is to ensure that n.pointers[0] always points
+to the largest node in the 0-subtree that has been com-
+pletely inserted (and not deleted yet), and symmetrically for
+n.pointers[1]; and furthermore, that if the deletion of top-
+level skiplist node u has completed, then it is not pointed
+to by any trie node. In a sense, we can think of each trie
+node as a linearizable pair of pointers, reflecting all insert
+and delete operations that have already “crossed” the level
+of the trie node.
+
+The hash table. As mentioned in Section 1, we use Split-
+Ordered Hashing [19] to implement the prefixes hash table.
+We require one additional method, compareAndDelete(p, n),
+which takes a prefix p and a trie node n, and removes p from
+prefixes iff the entry corresponding to p contains node n.
+This is easily achieved in the hash table of [19] by simply
+checking that p’s entry corresponds to n before marking it.
+
+
+
+
+1. Implement the aforementioned data structures
+2. Probably a good understanding by now, just do the thing or adapt the given 
+   pseudocode to work with dumb locks.
+   
+
+   
+   - List of functions:
+   
+   shown in the paper: 
+   fixPrev(pred, node)
+   topLevelDelete(pred, node)
+   xFastTriePred(key)
+   predecessor(key)	: ???
+   LowestAncestor(key)
+   insert(key)
+   delete(key)
+   
+   Wikipedia/x-fast trie:
+   
+    Find(k): find the value associated with the given key
+    Successor(k): find the key/value pair with the smallest key larger than or equal to the given key
+    Predecessor(k): find the key/value pair with the largest key less than or equal to the given key
+    Insert(k, v): insert the given key/value pair
+    Delete(k): remove the key/value pair with the given key
 
