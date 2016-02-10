@@ -69,8 +69,7 @@ into the SkipTrie is first inserted into the skiplist; initially
 it rises in the usual manner, starting at the bottom level
 and tossing a fair coin to determine at each level whether
 to continue on to the next level. If a key rises to the top
-of the truncated skiplist (i.e., to height log log u), we insert
-it into the x-fast trie
+of the truncated skiplist (i.e., to height log log u), we insert it into the x-fast trie
 
 
 
