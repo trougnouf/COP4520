@@ -93,7 +93,11 @@ remove it from the x-fast trie.
 	// "has never been implemented concurrently before"
 	
 	
-	
+- Hashing:
+a hash table prefixes, mapping prefixes to tree nodes rep-
+resenting them.
+
+
 2. Skiplist's brief overview
 
 3. Doubly-linked list
