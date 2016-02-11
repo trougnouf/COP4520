@@ -2,5 +2,53 @@
 #define SKIPLIST_H
 
 
+#include "skiplist.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+
+
+/*
+"log log u levels" "where u is the size of the key space"
+let u = 2^30 = 2147483648 = 1073741824
+log log u = 3.0346 ≅ 4
+*/
+#define slLEVELS 4	//TODO dynamic levels
+
+
+typedef struct slNode_ {
+	int key;
+	// int data // or use key as data
+	struct slNode_ * next[1];
+} slNode;
+
+
+slNode * slHead;    //	TODO probably shouldn't be a global var
+
+
+/*
+initialize skiplist with head.key=INT_MIN and tail=NULL
+*/
+void slInit();
+
+
+/* Insert key into skiplist.
+return -1: newKey exists
+return 0:  sucess, nothing left to do
+return 1:  sucess, top-level reached (x-fast trie required)
+*/
+char slInsert(int newKey);
+
+
+// return a pointer to the node which contains the desired key, or NULL if 404
+slNode * slFind(int key);
+
+/*
+Remove node whose value matches key
+return 0 if successful
+return -1 if 404
+*/
+char slRemove(int key);
+
 
 #endif

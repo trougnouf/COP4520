@@ -1,33 +1,10 @@
 #include "skiplist.h"
 
-//#include <stdint.h>
-#include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 /*
-"log log u levels" "where u is the size of the key space"
-let u = 2^30 = 2147483648 = 1073741824
-log log u = 3.0346 ≅ 4
-*/
-#define slLEVELS 4	//TODO dynamic levels
-
-
-typedef struct slNode_ {
-	int key;
-	// int data // or use key as data
-	struct slNode_ * next[1];
-} slNode;
-
-/*
-typedef struct {
-} SL;
-*/
-
-slNode * slHead;    //	TODO probably shouldn't be a global var
-
-/*
-initialize skiplist with head.key=INT_MIN and tail=NULL
+initialize skiplist with tail=NULL
 */
 void slInit()
 {
@@ -46,6 +23,7 @@ char slInsert(int newKey)
 1: find preceding bottom node by going through the nodes/level starting on top
 2: add after that node
 3: randomly add to higher levels
+
 for each level (except bottom?):
 	if curNode is smaller
 		if nextNode != NULL && nextNode is smaller: curNode = nextNode
@@ -95,21 +73,20 @@ if (coinflip): randomly add to higher level
 				}
 				else return 0;
 			}
-			//slNode * tmpNode = curNode->next[lv];
 			break;
 		}
 		else curNode[lv] = curNode[lv]->next[lv];
 	}
 }
 
-// return a pointer to the node containing the desired key, or NULL if 404
+// return a pointer to the node which contains the desired key, or NULL if 404
 slNode * slFind(int key)
 {
 	slNode * curNode = slHead;
 	char lv = slLEVELS-1;
 	for(;;)
 	{
-		if(!(*curNode).next[lv])
+		if(!(*curNode).next[lv] || (*(*curNode).next[lv]).key>key)
 		{
 			if(lv)
 			{
@@ -119,17 +96,54 @@ slNode * slFind(int key)
 			return NULL;
 		}
 		if((*(*curNode).next[lv]).key == key)
-			return (*curNode).next[lv];
-		if((*(*curNode).next[lv]).key<key)
-			curNode=(*curNode).next[lv];	// go right
-		else if(lv)	lv--;			// go down
-		else	return NULL;			// 404
+			return (*curNode).next[lv];	// found
+		curNode=(*curNode).next[lv];	// go right
 	}
+}
+
+/*
+Remove node whose value matches key
+return 0 if successful
+return -1 if 404
+*/
+char slRemove(int key)
+{
+	char lv = slLEVELS-1;
+	slNode * curNode[slLEVELS];
+	slNode * target;
+	curNode[lv] = slHead;
+	for(;;)
+	{
+		// go down?
+		if(!(curNode[lv]->next[lv]) || (*curNode[lv]->next[lv]).key>key)
+		{
+			if(lv)
+			{
+				curNode[lv-1] = curNode[lv--];
+				continue;
+			}
+			return -1;
+		}
+		// target acquired?
+		if((*(*curNode[lv]).next[lv]).key == key)
+		{
+			target = curNode[lv]->next[lv];	
+			break;
+		}
+		// go right
+		curNode[lv] = (*curNode[lv]).next[lv];
+	}
+	// eliminate target
+	for(;lv >= 0; lv--)	curNode[lv]->next[lv] = target[lv].next[lv];
+	free(target);
+	return 0;
 }
 
 int main()
 {
 	slInit();
+	
+	// testing spam
 	printf("50 %d\n", slInsert(50));
 	printf("50 %d\n", slInsert(50));
 	printf("48 %d\n", slInsert(48));
@@ -146,8 +160,13 @@ int main()
 	printf("5 %d\n", slInsert(5));
 	printf("10 %d\n", slInsert(10));
 	printf("9 %d\n", slInsert(9));
-	printf("%d\n", slFind(10));
+	printf("%d\n", slFind(0));
 	printf("%d\n", slFind(11));
+	printf("%d\n", slFind(50));
+	printf("%d\n", slFind(70));
+	printf("%d\n", slRemove(50));
+	printf("%d\n", slFind(50));
+	printf("%d\n", slFind(70));
 }
 
 
