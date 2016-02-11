@@ -51,29 +51,30 @@ if (coinflip): randomly add to higher level
 	find previous node and next node that have a higher level
 */
 	
-	slNode * curNode = slHead;
-	slNode * closestNode[slLEVELS];
+	//slNode * curNode = slHead;
+	slNode * curNode[slLEVELS];
+	curNode[slLEVELS-1] = slHead;
 	char lv;
+	// create a path from top to bottom
 	for(lv = slLEVELS-1; lv > 0; lv--)
 	{
-		while((*curNode).key < newKey)	// if curNode is smaller
+		while((*curNode[lv]).key < newKey)	// if curNode is smaller
 		{
-			if(curNode->next[lv] && (*curNode->next[lv]).key<newKey)
+			if(curNode[lv]->next[lv] && (*curNode[lv]->next[lv]).key<newKey)
 			{
-				curNode = curNode->next[lv];
+				curNode[lv] = curNode[lv]->next[lv];
 			}
 			else	// keep track of closestNode and go down
 			{
-				closestNode[lv] = curNode;
+				curNode[lv-1] = curNode[lv];
 				break;
 			}
 		}
 	}
 	for(;;)	// bottom reached; create and add node
 	{
-		if(!(curNode->next[lv]) || (*curNode->next[lv]).key>newKey)
+		if(!(curNode[lv]->next[lv]) || (*curNode[lv]->next[lv]).key>newKey)
 		{ // become next node
-			closestNode[lv] = curNode;
 			int coin = rand() % (slLEVELS*2)+1;
 			slNode * newNode = malloc(sizeof(slNode) +
 					   sizeof(slNode*)*((slLEVELS*2)/coin));
@@ -83,19 +84,17 @@ if (coinflip): randomly add to higher level
 
 				if((coin) <= (slLEVELS*2)/(lv+1))
 				{
-					newNode->next[lv] = closestNode[lv]->next[lv];
-					closestNode[lv]->next[lv] = newNode;
+					newNode->next[lv] = curNode[lv]->next[lv];
+					curNode[lv]->next[lv] = newNode;
 					if(lv == slLEVELS-1)	return 1;
 				}
 				else return 0;
 			}
-			slNode * tmpNode = curNode->next[lv];
+			//slNode * tmpNode = curNode->next[lv];
 			break;
 		}
-		else curNode = curNode->next[lv];
+		else curNode[lv] = curNode[lv]->next[lv];
 	}
-	
-	
 }
 
 int main()
