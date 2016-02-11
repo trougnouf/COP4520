@@ -10,14 +10,13 @@
 let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
-#define SLLEVELS 4	//TODO dynamic levels
+#define slLEVELS 4	//TODO dynamic levels
 
 
 typedef struct slNode_ {
 	int key;
 	// int data // or use key as data
 	struct slNode_ * next[1];
-	// may need to keep track of levels here
 } slNode;
 
 /*
@@ -32,9 +31,8 @@ initialize skiplist with head.key=INT_MIN and tail=NULL
 */
 void slInit()
 {
-	slHead = malloc( sizeof(slNode) + sizeof(slNode*)*SLLEVELS );
-	for(char i=0; i<SLLEVELS; i++)	slHead->next[i] = NULL;
-	// keep track of size in slNode?
+	slHead = malloc( sizeof(slNode) + sizeof(slNode*)*slLEVELS );
+	for(char i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
 }
 
 // Insert key into skiplist. Return 1 if top of skiplist is reached
@@ -50,30 +48,62 @@ for each level (except bottom?):
 		else: go down
 bottom: if nextNode = NULL or nextNode is bigger, become nextNode
 if (coinflip): randomly add to higher level
-	find previous node and next node that have a higher level (use sizeof?nope)
+	find previous node and next node that have a higher level
 */
 	
 	slNode * curNode = slHead;
-	for(char lv = SLLEVELS-1; lv > 0; lv--)
+	slNode * closestNode[slLEVELS];
+	char lv;
+	for(lv = slLEVELS-1; lv > 0; lv--)
 	{
-		while((*curNode).key < newKey)
+		while((*curNode).key < newKey)	// if curNode is smaller
 		{
 			if(curNode->next[lv] && (*curNode->next[lv]).key<newKey)
 			{
 				curNode = curNode->next[lv];
 			}
-			else break;	// go down
+			else	// keep track of closestNode and go down
+			{
+				closestNode[lv] = curNode;
+				break;
+			}
 		}
 	}
+	for(;;)	// bottom reached; create and add node
+	{
+		if(!(curNode->next[lv]) || (*curNode->next[lv]).key>newKey)
+		{ // become next node
+			closestNode[lv] = curNode;
+			int coin = rand() % (slLEVELS*2)+1;
+			slNode * newNode = malloc(sizeof(slNode) +
+					   sizeof(slNode*)*((slLEVELS*2)/coin));
+			(*newNode).key = newKey;
+			for(lv = 0; lv < slLEVELS; lv++)
+			{
+
+				if((coin) <= (slLEVELS*2)/(lv+1))
+				{
+					newNode->next[lv] = closestNode[lv]->next[lv];
+					closestNode[lv]->next[lv] = newNode;
+					if(lv == slLEVELS-1)	return 1;
+				}
+				else return 0;
+			}
+			slNode * tmpNode = curNode->next[lv];
+			break;
+		}
+		else curNode = curNode->next[lv];
+	}
 	
-	//start on the bottom (level=0)
-	//for(int lv=0; lv++; curNode->next[lv])
 	
 }
 
 int main()
 {
 	slInit();
+	slInsert(50);
+	slInsert(51);
+	slInsert(52);
 }
 
 
