@@ -35,7 +35,11 @@ void slInit()
 	for(char i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
 }
 
-// Insert key into skiplist. Return 1 if top of skiplist is reached
+/* Insert key into skiplist.
+return -1: newKey exists
+return 0:  sucess, nothing left to do
+return 1:  sucess, top-level reached (x-fast trie required)
+*/
 char slInsert(int newKey)
 {
 /*
@@ -75,6 +79,7 @@ if (coinflip): randomly add to higher level
 	{
 		if(!(curNode[lv]->next[lv]) || (*curNode[lv]->next[lv]).key>newKey)
 		{ // become next node
+		if(newKey == (*curNode[lv]).key)	return -1;
 			int coin = rand() % (slLEVELS*2)+1;
 			slNode * newNode = malloc(sizeof(slNode) +
 					   sizeof(slNode*)*((slLEVELS*2)/coin));
@@ -97,12 +102,52 @@ if (coinflip): randomly add to higher level
 	}
 }
 
+// return a pointer to the node containing the desired key, or NULL if 404
+slNode * slFind(int key)
+{
+	slNode * curNode = slHead;
+	char lv = slLEVELS-1;
+	for(;;)
+	{
+		if(!(*curNode).next[lv])
+		{
+			if(lv)
+			{
+				lv--;
+				continue;
+			}
+			return NULL;
+		}
+		if((*(*curNode).next[lv]).key == key)
+			return (*curNode).next[lv];
+		if((*(*curNode).next[lv]).key<key)
+			curNode=(*curNode).next[lv];	// go right
+		else if(lv)	lv--;			// go down
+		else	return NULL;			// 404
+	}
+}
+
 int main()
 {
 	slInit();
-	slInsert(50);
-	slInsert(51);
-	slInsert(52);
+	printf("50 %d\n", slInsert(50));
+	printf("50 %d\n", slInsert(50));
+	printf("48 %d\n", slInsert(48));
+	printf("52 %d\n", slInsert(52));
+	printf("56 %d\n", slInsert(56));
+	printf("70 %d\n", slInsert(70));
+	printf("2 %d\n", slInsert(2));
+	printf("50 %d\n", slInsert(50));
+	printf("1 %d\n", slInsert(1));
+	printf("2 %d\n", slInsert(2));
+	printf("4 %d\n", slInsert(4));
+	printf("3 %d\n", slInsert(3));
+	printf("6 %d\n", slInsert(6));
+	printf("5 %d\n", slInsert(5));
+	printf("10 %d\n", slInsert(10));
+	printf("9 %d\n", slInsert(9));
+	printf("%d\n", slFind(10));
+	printf("%d\n", slFind(11));
 }
 
 
