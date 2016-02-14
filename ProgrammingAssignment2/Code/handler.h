@@ -17,7 +17,6 @@ typedef struct
 {
 	State curState;
 	int ioData;
-	//char ioFlag;	// 'w' = waiting, 'e' = exit
 	slNode * resultNode;
 	
 	slNode * slHead;
@@ -28,6 +27,9 @@ void* thread_dsHandler(void* args);
 double getTimeElapsed(struct timeval * begTime);
 
 Task * loadTestCase();	// in testcase1.h
+
+void printResults(struct timeval * begTime);
+double getTimeElapsed(struct timeval * begTime);
 
 #endif
 

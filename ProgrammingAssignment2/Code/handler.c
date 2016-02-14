@@ -12,23 +12,22 @@ TODO: Add x-fast trie functions to switch() statement
 
 #include "handler.h"
 #include "testcase1.h"
-//#include "skiplist.h"
-
-#include <unistd.h>
-
-#define VERBOSE 0
+#include "skiplist.h"
 
 
 void* thread_dsHandler(void* args)
 {
 	pthreadData * sharedData = (pthreadData *)args;
-
+	char retStat;
 	for(;;)
 	{
-		char retStat;
+		#if VERBOSE
+		printf(	"Thread: %d, Task: %d, data: %d\n",
+		sharedData, sharedData->curState, sharedData->ioData);
+		#endif
 		switch(((pthreadData *)args)->curState)
 		{
-		// define thread behavior here (and/or call functions)
+			// define thread behavior here (and/or call functions)
 			case FIND:
 				retStat = (slFind(sharedData->slHead, sharedData->ioData)!=NULL);
 				#if VERBOSE
@@ -36,6 +35,7 @@ void* thread_dsHandler(void* args)
 				sharedData->ioData, retStat);
 				#endif
 				//...
+				sharedData->curState = IDLE;
 				break;
 			case INSERT:
 				retStat = slInsert(sharedData->slHead, sharedData->ioData);
@@ -45,6 +45,7 @@ void* thread_dsHandler(void* args)
 				#endif
 				if(retStat == 1)
 					;//TODO call xInsert()
+				sharedData->curState = IDLE;
 				break;
 			case REMOVE:
 				retStat = slRemove(sharedData->slHead, sharedData->ioData);
@@ -53,18 +54,23 @@ void* thread_dsHandler(void* args)
 				printf(	"Removed %d from skiplist: %d\n",
 					sharedData->ioData, retStat);
 				#endif
+				sharedData->curState = IDLE;
 				break;
 			case IDLE:
-				continue;
+				while(sharedData->curState == IDLE);
 				break;
 			case TERM:
+			#if VERBOSE
+			printf(	"Thread: %d, Task: %d, Goodbye.\n",
+			sharedData, sharedData->curState);
+			#endif
 				pthread_exit(NULL);
 				break;
 			default:
 				break;
 			
 		}
-		((pthreadData *)args)->curState = IDLE;
+		//((pthreadData *)args)->curState = IDLE;
 	}
 }
 
@@ -109,11 +115,29 @@ int main()
 	// terminate all threads
 	for(uint8_t thr=0; thr<NUMTHREADS; thr++)
 	{
+		while(threadData[thr].curState != IDLE);
 		threadData[thr].curState = TERM;
 		pthread_join(threads[thr], NULL);
 	}
 	
-	printf("Time elapsed: %lfs\n", getTimeElapsed(&begTime));
+	printResults(&begTime);
+	//printf("Time elapsed: %lfs\n", getTimeElapsed(&begTime));
+}
+
+void printResults(struct timeval * begTime)
+{
+#define NUMTHREADS 28	// used in handler.c
+#define NUMTASKS 100	// used in handler.c and testcase1.c
+#define VERBOSE 0
+
+// Used in test case
+#define PERCENTINSERT 50
+#define PERCENTFIND 25
+#define PERCENTREMOVE 25
+	printf("The end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
+	printf(	"Tasks breakdown (%%):\n\tinsert: %d, find: %d, remove: %d\n",
+		PERCENTINSERT, PERCENTFIND, PERCENTREMOVE);
+	printf("Time elapsed:\n\t%lfs\n", getTimeElapsed(begTime));
 }
 
 double getTimeElapsed(struct timeval * begTime)

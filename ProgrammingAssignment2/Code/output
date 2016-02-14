@@ -1,0 +1,330 @@
+Thread: -883103568, Task: 3, data: 0
+Thread: -883103544, Task: 3, data: 32591
+Thread: -883103568, Task: 1, data: 846930886
+Thread: -883103544, Task: 0, data: 640895091
+Found 640895091 in skiplist: 0
+Thread: -883103544, Task: 3, data: 640895091
+Added 846930886 to skiplist: 1
+Thread: -883103568, Task: 3, data: 846930886
+Added 135497281 to skiplist: 0
+Thread: -883103568, Task: 3, data: 135497281
+Thread: -883103568, Task: 1, data: 1010679101
+Added 1010679101 to skiplist: 0
+Thread: -883103568, Task: 3, data: 1010679101
+Thread: -883103568, Task: 1, data: 753594503
+Added 753594503 to skiplist: 0
+Thread: -883103568, Task: 3, data: 753594503
+Thread: -883103568, Task: 1, data: 85384681
+Added 85384681 to skiplist: 0
+Thread: -883103568, Task: 3, data: 85384681
+Thread: -883103568, Task: 1, data: 558879905
+Added 558879905 to skiplist: 0
+Thread: -883103568, Task: 3, data: 558879905
+Thread: -883103568, Task: 2, data: 360184033
+Removed 360184033 from skiplist: -1
+Thread: -883103568, Task: 3, data: 360184033
+Removed 84353895 from skiplist: -1
+Thread: -883103568, Task: 3, data: 84353895
+Added 927358721 to skiplist: 1
+Thread: -883103568, Task: 3, data: 927358721
+Added 42999170 to skiplist: 0
+Thread: -883103568, Task: 1, data: 474491543
+Added 474491543 to skiplist: 1
+Thread: -883103568, Task: 3, data: 474491543
+Thread: -883103568, Task: 2, data: 760313750
+Removed 760313750 from skiplist: -1
+Thread: -883103568, Task: 3, data: 760313750
+Thread: -883103568, Task: 1, data: 356426808
+Added 356426808 to skiplist: 0
+Thread: -883103568, Task: 3, data: 356426808
+Thread: -883103544, Task: 3, data: 42999170
+Added 512248540 to skiplist: 1
+Removed 816205354 from skiplist: -1
+Thread: -883103568, Task: 3, data: 816205354
+Thread: -883103568, Task: 1, data: 844760827
+Added 844760827 to skiplist: 1
+Thread: -883103568, Task: 3, data: 844760827
+Thread: -883103568, Task: 1, data: 400870575
+Added 400870575 to skiplist: 1
+Thread: -883103568, Task: 3, data: 400870575
+Thread: -883103568, Task: 2, data: 190353236
+Removed 190353236 from skiplist: -1
+Thread: -883103568, Task: 3, data: 190353236
+Thread: -883103568, Task: 1, data: 770251544
+Added 770251544 to skiplist: 0
+Thread: -883103568, Task: 3, data: 770251544
+Thread: -883103568, Task: 1, data: 910468188
+Added 910468188 to skiplist: 0
+Thread: -883103568, Task: 3, data: 910468188
+Thread: -883103568, Task: 2, data: 675956762
+Removed 675956762 from skiplist: -1
+Thread: -883103568, Task: 3, data: 675956762
+Thread: -883103568, Task: 2, data: 882555715
+Removed 882555715 from skiplist: -1
+Thread: -883103568, Task: 3, data: 882555715
+Thread: -883103568, Task: 2, data: 463480570
+Removed 463480570 from skiplist: -1
+Thread: -883103568, Task: 3, data: 463480570
+Thread: -883103568, Task: 0, data: 902218554
+Found 902218554 in skiplist: 0
+Thread: -883103568, Task: 3, data: 902218554
+Thread: -883103520, Task: 0, data: 424238335
+Found 424238335 in skiplist: 0
+Thread: -883103520, Task: 3, data: 424238335
+Thread: -883103568, Task: 2, data: 818324777
+Removed 818324777 from skiplist: -1
+Thread: -883103568, Task: 3, data: 818324777
+Thread: -883103568, Task: 1, data: 603570492
+Added 603570492 to skiplist: 0
+Thread: -883103568, Task: 3, data: 603570492
+Added 660260756 to skiplist: 0
+Thread: -883103568, Task: 3, data: 660260756
+Removed 485560280 from skiplist: -1
+Thread: -883103568, Task: 3, data: 485560280
+Added 593209441 to skiplist: 0
+Thread: -883103568, Task: 3, data: 593209441
+Thread: -883103568, Task: 1, data: 894429689
+Added 894429689 to skiplist: 0
+Thread: -883103568, Task: 3, data: 894429689
+Thread: -883103568, Task: 1, data: 873604795
+Added 873604795 to skiplist: 0
+Thread: -883103568, Task: 3, data: 873604795
+Thread: -883103568, Task: 2, data: 270744729
+Removed 270744729 from skiplist: -1
+Thread: -883103568, Task: 3, data: 270744729
+Thread: -883103568, Task: 2, data: 559366293
+Removed 559366293 from skiplist: -1
+Thread: -883103568, Task: 3, data: 559366293
+Thread: -883103568, Task: 2, data: 934163947
+Removed 934163947 from skiplist: -1
+Thread: -883103568, Task: 3, data: 934163947
+Thread: -883103568, Task: 0, data: 822890675
+Found 822890675 in skiplist: 0
+Thread: -883103568, Task: 3, data: 822890675
+Thread: -883103568, Task: 1, data: 791698927
+Added 791698927 to skiplist: 0
+Thread: -883103568, Task: 3, data: 791698927
+Found 498777856 in skiplist: 0
+Added 927612902 to skiplist: 0
+Thread: -883103520, Task: 3, data: 927612902
+Thread: -883103520, Task: 1, data: 498535141
+Thread: -883103568, Task: 3, data: 498777856
+Removed 524872353 from skiplist: -1
+Thread: -883103568, Task: 3, data: 524872353
+Thread: -883103568, Task: 1, data: 630222859
+Added 498535141 to skiplist: 0
+Thread: -883103520, Task: 3, data: 498535141
+Thread: -883103520, Task: 1, data: 526286800
+Added 526286800 to skiplist: 0
+Added 630222859 to skiplist: 0
+Thread: -883103568, Task: 3, data: 630222859
+Thread: -883103568, Task: 1, data: 46307005
+Thread: -883103520, Task: 3, data: 526286800
+Found 966591047 in skiplist: 0
+Thread: -883103520, Task: 3, data: 966591047
+Thread: -883103520, Task: 0, data: 515530019
+Added 46307005 to skiplist: 0
+Thread: -883103568, Task: 3, data: 46307005
+Thread: -883103568, Task: 1, data: 499621544
+Found 515530019 in skiplist: 0
+Thread: -883103520, Task: 3, data: 515530019
+Thread: -883103520, Task: 1, data: 1003744891
+Added 499621544 to skiplist: 1
+Thread: -883103568, Task: 3, data: 499621544
+Thread: -883103568, Task: 1, data: 557776325
+Added 1003744891 to skiplist: 0
+Thread: -883103520, Task: 3, data: 1003744891
+Thread: -883103520, Task: 2, data: 289700723
+Removed 289700723 from skiplist: -1
+Added 557776325 to skiplist: 0
+Thread: -883103568, Task: 3, data: 557776325
+Thread: -883103568, Task: 2, data: 439493451
+Removed 439493451 from skiplist: -1
+Thread: -883103568, Task: 3, data: 439493451
+Thread: -883103520, Task: 3, data: 289700723
+Added 168002245 to skiplist: 0
+Thread: -883103520, Task: 3, data: 168002245
+Thread: -883103568, Task: 1, data: 686501731
+Added 686501731 to skiplist: 0
+Thread: -883103568, Task: 3, data: 686501731
+Thread: -883103520, Task: 0, data: 548855664
+Thread: -883103568, Task: 1, data: 338888228
+Found 548855664 in skiplist: 0
+Thread: -883103520, Task: 3, data: 548855664
+Found 438792350 in skiplist: 0
+Thread: -883103520, Task: 3, data: 438792350
+Thread: -883103520, Task: 0, data: 269441500
+Added 338888228 to skiplist: 0
+Found 269441500 in skiplist: 0
+Thread: -883103520, Task: 3, data: 269441500
+Added 155324914 to skiplist: 0
+Thread: -883103520, Task: 3, data: 155324914
+Thread: -883103568, Task: 3, data: 338888228
+Thread: -883103520, Task: 1, data: 908534032
+Added 116087764 to skiplist: 1
+Added 908534032 to skiplist: 0
+Thread: -883103568, Task: 3, data: 116087764
+Thread: -883103520, Task: 3, data: 908534032
+Removed 387346491 from skiplist: -1
+Thread: -883103568, Task: 3, data: 387346491
+Removed 686540112 from skiplist: -1
+Thread: -883103568, Task: 3, data: 686540112
+Thread: -883103568, Task: 0, data: 112710727
+Removed 841148365 from skiplist: -1
+Found 112710727 in skiplist: 0
+Thread: -883103520, Task: 3, data: 841148365
+Found 971899228 in skiplist: 0
+Thread: -883103520, Task: 3, data: 971899228
+Thread: -883103520, Task: 1, data: 552534297
+Thread: -883103568, Task: 3, data: 112710727
+Added 552534297 to skiplist: 0
+Thread: -883103520, Task: 3, data: 552534297
+Thread: -883103520, Task: 0, data: 1057052571
+Found 1057052571 in skiplist: 0
+Removed 213975407 from skiplist: -1
+Thread: -883103568, Task: 3, data: 213975407
+Thread: -883103568, Task: 0, data: 276831969
+Found 276831969 in skiplist: 0
+Thread: -883103520, Task: 3, data: 1057052571
+Added 810919413 to skiplist: 0
+Thread: -883103520, Task: 3, data: 810919413
+Thread: -883103568, Task: 3, data: 276831969
+Removed 532152604 from skiplist: -1
+Thread: -883103568, Task: 3, data: 532152604
+Thread: -883103568, Task: 1, data: 710897705
+Added 913489187 to skiplist: 0
+Thread: -883103520, Task: 3, data: 913489187
+Added 710897705 to skiplist: 0
+Thread: -883103568, Task: 3, data: 710897705
+Thread: -883103568, Task: 4, Goodbye.
+Thread: -883103352, Task: 2, data: 229713912
+Removed 229713912 from skiplist: -1
+Thread: -883103352, Task: 3, data: 229713912
+Thread: -883103544, Task: 3, data: 512248540
+Added 709393584 to skiplist: 0
+Thread: -883103544, Task: 3, data: 709393584
+Thread: -883103544, Task: 4, Goodbye.
+Thread: -883103520, Task: 4, data: 913489187
+Thread: -883103520, Task: 4, Goodbye.
+Thread: -883103328, Task: 1, data: 521595368
+Added 521595368 to skiplist: 0
+Thread: -883103328, Task: 3, data: 521595368
+Thread: -883103304, Task: 1, data: 653214605
+Added 653214605 to skiplist: 0
+Thread: -883103304, Task: 3, data: 653214605
+Thread: -883102920, Task: 1, data: 749241873
+Added 749241873 to skiplist: 0
+Thread: -883102920, Task: 3, data: 749241873
+Thread: -883103280, Task: 1, data: 861021530
+Added 861021530 to skiplist: 0
+Thread: -883103280, Task: 3, data: 861021530
+Thread: -883102944, Task: 2, data: 350527156
+Removed 350527156 from skiplist: -1
+Thread: -883102944, Task: 3, data: 350527156
+Thread: -883103256, Task: 1, data: 233665123
+Added 233665123 to skiplist: 0
+Thread: -883103256, Task: 3, data: 233665123
+Thread: -883103232, Task: 1, data: 468703135
+Added 468703135 to skiplist: 1
+Thread: -883103232, Task: 3, data: 468703135
+Thread: -883103208, Task: 0, data: 728237978
+Found 728237978 in skiplist: 0
+Thread: -883103208, Task: 3, data: 728237978
+Thread: -883103184, Task: 1, data: 635723058
+Added 635723058 to skiplist: 0
+Thread: -883103184, Task: 3, data: 635723058
+Thread: -883103160, Task: 2, data: 52156343
+Removed 52156343 from skiplist: -1
+Thread: -883103160, Task: 3, data: 52156343
+Thread: -883103376, Task: 1, data: 466641602
+Added 466641602 to skiplist: 0
+Thread: -883103376, Task: 3, data: 466641602
+Thread: -883103136, Task: 1, data: 1015276632
+Added 1015276632 to skiplist: 0
+Thread: -883103136, Task: 3, data: 1015276632
+Thread: -883103112, Task: 0, data: 582736218
+Found 582736218 in skiplist: 0
+Thread: -883103112, Task: 3, data: 582736218
+Thread: -883103088, Task: 0, data: 579635549
+Found 579635549 in skiplist: 0
+Thread: -883103088, Task: 3, data: 579635549
+Thread: -883103064, Task: 0, data: 840803095
+Found 840803095 in skiplist: 0
+Thread: -883103064, Task: 3, data: 840803095
+Thread: -883103040, Task: 2, data: 756898537
+Removed 756898537 from skiplist: -1
+Thread: -883103040, Task: 3, data: 756898537
+Thread: -883103016, Task: 2, data: 899852500
+Removed 899852500 from skiplist: -1
+Thread: -883103016, Task: 3, data: 899852500
+Thread: -883102992, Task: 0, data: 964922546
+Found 964922546 in skiplist: 0
+Thread: -883102992, Task: 3, data: 964922546
+Thread: -883102968, Task: 2, data: 184803526
+Removed 184803526 from skiplist: -1
+Thread: -883102968, Task: 3, data: 184803526
+Thread: -883103400, Task: 0, data: 893772102
+Found 893772102 in skiplist: 0
+Thread: -883103400, Task: 3, data: 893772102
+Thread: -883103424, Task: 0, data: 28778235
+Found 28778235 in skiplist: 0
+Thread: -883103424, Task: 3, data: 28778235
+Thread: -883103448, Task: 1, data: 276748203
+Added 276748203 to skiplist: 0
+Thread: -883103448, Task: 3, data: 276748203
+Thread: -883103472, Task: 1, data: 115899597
+Added 115899597 to skiplist: 0
+Thread: -883103472, Task: 3, data: 115899597
+Thread: -883103496, Task: 1, data: 576018668
+Added 576018668 to skiplist: 1
+Thread: -883103496, Task: 3, data: 576018668
+Thread: -883103496, Task: 4, Goodbye.
+Thread: -883103472, Task: 4, data: 115899597
+Thread: -883103472, Task: 4, Goodbye.
+Thread: -883103448, Task: 4, data: 276748203
+Thread: -883103448, Task: 4, Goodbye.
+Thread: -883103424, Task: 4, data: 28778235
+Thread: -883103424, Task: 4, Goodbye.
+Thread: -883103400, Task: 4, data: 893772102
+Thread: -883103400, Task: 4, Goodbye.
+Thread: -883103376, Task: 4, data: 466641602
+Thread: -883103376, Task: 4, Goodbye.
+Thread: -883103352, Task: 4, data: 229713912
+Thread: -883103352, Task: 4, Goodbye.
+Thread: -883103328, Task: 4, data: 521595368
+Thread: -883103328, Task: 4, Goodbye.
+Thread: -883103304, Task: 4, data: 653214605
+Thread: -883103304, Task: 4, Goodbye.
+Thread: -883103280, Task: 4, data: 861021530
+Thread: -883103280, Task: 4, Goodbye.
+Thread: -883103256, Task: 4, data: 233665123
+Thread: -883103256, Task: 4, Goodbye.
+Thread: -883103232, Task: 4, data: 468703135
+Thread: -883103232, Task: 4, Goodbye.
+Thread: -883103208, Task: 4, data: 728237978
+Thread: -883103208, Task: 4, Goodbye.
+Thread: -883103184, Task: 4, data: 635723058
+Thread: -883103184, Task: 4, Goodbye.
+Thread: -883103160, Task: 4, data: 52156343
+Thread: -883103160, Task: 4, Goodbye.
+Thread: -883103136, Task: 4, data: 1015276632
+Thread: -883103136, Task: 4, Goodbye.
+Thread: -883103112, Task: 4, data: 582736218
+Thread: -883103112, Task: 4, Goodbye.
+Thread: -883103088, Task: 4, data: 579635549
+Thread: -883103088, Task: 4, Goodbye.
+Thread: -883103064, Task: 4, data: 840803095
+Thread: -883103064, Task: 4, Goodbye.
+Thread: -883103040, Task: 4, data: 756898537
+Thread: -883103040, Task: 4, Goodbye.
+Thread: -883103016, Task: 4, data: 899852500
+Thread: -883103016, Task: 4, Goodbye.
+Thread: -883102992, Task: 4, data: 964922546
+Thread: -883102992, Task: 4, Goodbye.
+Thread: -883102968, Task: 4, data: 184803526
+Thread: -883102968, Task: 4, Goodbye.
+Thread: -883102944, Task: 4, data: 350527156
+Thread: -883102944, Task: 4, Goodbye.
+Thread: -883102920, Task: 4, data: 749241873
+Thread: -883102920, Task: 4, Goodbye.
+Time elapsed: 0.278937s
