@@ -126,14 +126,6 @@ int main()
 
 void printResults(struct timeval * begTime)
 {
-#define NUMTHREADS 28	// used in handler.c
-#define NUMTASKS 100	// used in handler.c and testcase1.c
-#define VERBOSE 0
-
-// Used in test case
-#define PERCENTINSERT 50
-#define PERCENTFIND 25
-#define PERCENTREMOVE 25
 	printf("The end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
 	printf(	"Tasks breakdown (%%):\n\tinsert: %d, find: %d, remove: %d\n",
 		PERCENTINSERT, PERCENTFIND, PERCENTREMOVE);
