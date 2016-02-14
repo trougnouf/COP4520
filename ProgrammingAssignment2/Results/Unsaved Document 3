@@ -1,3 +1,21 @@
+[trougnouf@d Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out
+The end.
+	Threads: 1, tasks: 50000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	3.236272s
+[trougnouf@d Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out
+The end.
+	Threads: 1, tasks: 50000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	3.219419s
+[trougnouf@d Code]$ 
+
+
+
 /*
 This file contains anything that isn't specific to one particular data structure
 or test case.
@@ -19,38 +37,22 @@ void* thread_dsHandler(void* args)
 {
 	pthreadData * sharedData = (pthreadData *)args;
 	char retStat;
-	//#if VERBOSE
-	struct timeval idleTimerBeg;
-	double idleTimerTot = 0;
-	//#endif
-	/*
-	// Trying to speedup, this made virtually no difference
 	for(;;)
 	{
-		while(sharedData->curState == IDLE);
-		if(sharedData->curState == INSERT)
+	/*
+		if(sharedData->curState != IDLE)
 		{
 			slInsert(sharedData->slHead, sharedData->ioData);
+			#if VERBOSE
+			printf(	"Added %d to skiplist\n",
+			sharedData->ioData);
+			#endif
+			if(sharedData->curState ==TERM)	return 0;
+			sharedData->curState = IDLE;
 		}
-		else if(sharedData->curState == FIND)
-		{
-			slFind(sharedData->slHead, sharedData->ioData);
-		}
-		else if(sharedData->curState == REMOVE)
-		{
-			slRemove(sharedData->slHead, sharedData->ioData);
-		}
-		else
-		{
-			pthread_exit(NULL);
-		}
-		sharedData->curState = IDLE;
-	}
-	*/
-	
-	for(;;)
-	{
-
+		if(sharedData->curState ==TERM)	return 0;
+		*/
+		
 		#if VERBOSE
 		printf(	"Thread: %d, Task: %d, data: %d\n",
 		sharedData, sharedData->curState, sharedData->ioData);
@@ -87,23 +89,19 @@ void* thread_dsHandler(void* args)
 				sharedData->curState = IDLE;
 				break;
 			case IDLE:
-				gettimeofday(&idleTimerBeg, NULL);
 				while(sharedData->curState == IDLE);
-				idleTimerTot += getTimeElapsed(&idleTimerBeg);
 				break;
 			case TERM:
 				#if VERBOSE
 				printf(	"Thread: %d, Task: %d, Goodbye.\n",
 				sharedData, sharedData->curState);
 				#endif
-				printf("Wasted %lfs idling.\n", idleTimerTot);
 				pthread_exit(NULL);
 				break;
 			
 		}
 		
 	}
-	
 }
 
 
@@ -131,10 +129,9 @@ int main()
 	}
 	
 	// task and thread scheduler
-	uint8_t thr;
 	for(int tsk=0; tsk < NUMTASKS;)
 	{
-		for(thr=0; thr<NUMTHREADS; thr++)
+		for(uint8_t thr=0; thr<NUMTHREADS; thr++)
 		{
 			if(threadData[thr].curState == IDLE)
 			{
@@ -154,7 +151,9 @@ int main()
 		threadData[thr].curState = TERM;
 		pthread_join(threads[thr], NULL);
 	}
+	
 	printResults(&begTime);
+	//printf("Time elapsed: %lfs\n", getTimeElapsed(&begTime));
 }
 
 void printResults(struct timeval * begTime)

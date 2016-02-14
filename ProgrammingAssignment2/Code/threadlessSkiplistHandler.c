@@ -1,7 +1,7 @@
 #include "skiplist.h"
 #include <sys/time.h>
 
-#define NUMKEYS 250000
+#define NUMKEYS 50000
 #define VERBOSE 1
 
 double getTimeElapsed(struct timeval * begTime);
