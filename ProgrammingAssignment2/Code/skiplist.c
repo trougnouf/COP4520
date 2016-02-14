@@ -7,10 +7,11 @@
 /*
 initialize skiplist with tail=NULL
 */
-void slInit()
+slNode * slInit()
 {
-	slHead = malloc( sizeof(slNode) + sizeof(slNode*)*slLEVELS );
+	slNode * slHead = malloc( sizeof(slNode) + sizeof(slNode*)*slLEVELS );
 	for(char i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
+	return slHead;
 }
 
 /* Insert key into skiplist.
@@ -18,7 +19,7 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-char slInsert(int newKey)
+char slInsert(slNode * slHead, int newKey)
 {
 /*
 1: find preceding bottom node by going through the nodes/level starting on top
@@ -81,7 +82,7 @@ if (coinflip): randomly add to higher level
 }
 
 // return a pointer to the node which contains the desired key, or NULL if 404
-slNode * slFind(int key)
+slNode * slFind(slNode * slHead, int key)
 {
 	slNode * curNode = slHead;
 	char lv = slLEVELS-1;
@@ -107,7 +108,7 @@ Remove node whose value matches key
 return 0 if successful
 return -1 if 404
 */
-char slRemove(int key)
+char slRemove(slNode * slHead, int key)
 {
 	char lv = slLEVELS-1;
 	slNode * curNode[slLEVELS];

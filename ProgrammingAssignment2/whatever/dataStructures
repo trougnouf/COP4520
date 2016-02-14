@@ -23,8 +23,12 @@ p levels?
 
 
 Find:
-Look through the X-Fast's bottom level hash table
-for a pointer to the matching top of the skilist
+Look into hash table.
+404? Go up until found
+Found something? Go back down
+	if value is higher than desired: go left until value is <= than desired
+	search through the skiplist
+	
 
 
 Insert:

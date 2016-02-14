@@ -23,13 +23,11 @@ typedef struct slNode_ {
 } slNode;
 
 
-slNode * slHead;    //	TODO probably shouldn't be a global var
-
 
 /*
 initialize skiplist with head.key=INT_MIN and tail=NULL
 */
-void slInit();
+slNode * slInit();
 
 
 /* Insert key into skiplist.
@@ -37,18 +35,18 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-char slInsert(int newKey);
+char slInsert(slNode * slHead, int newKey);
 
 
 // return a pointer to the node which contains the desired key, or NULL if 404
-slNode * slFind(int key);
+slNode * slFind(slNode * slHead, int key);
 
 /*
 Remove node whose value matches key
 return 0 if successful
 return -1 if 404
 */
-char slRemove(int key);
+char slRemove(slNode * slHead, int key);
 
 
 #endif
