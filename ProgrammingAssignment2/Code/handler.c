@@ -86,7 +86,6 @@ int main()
 	gettimeofday(&begTime, NULL);
 
 	// init Data Structures
-	
 	slNode * slHead = slInit();
 	
 	// init Threads
@@ -109,6 +108,9 @@ int main()
 				threadData[thr].ioData = todoList[tsk].inData;
 				threadData[thr].curState = todoList[tsk].task;
 				tsk++;
+				#if VERBOSE == 2
+				printf("%d tasks remaining\n", NUMTASKS-tsk);
+				#endif
 			}
 		}
 	}
