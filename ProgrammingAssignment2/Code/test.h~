@@ -1,0 +1,6 @@
+#ifndef TEST_H
+#define TEST_H
+
+#include "init.h"
+
+#endif

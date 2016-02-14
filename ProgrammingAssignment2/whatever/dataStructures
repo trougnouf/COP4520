@@ -17,3 +17,20 @@ resources:
 https://en.wikipedia.org/wiki/Skip_list
 https://www.cs.auckland.ac.nz/~jmor159/PLDS210/niemann/s_skl.txt
 p334
+
+X-Fast Trie
+p levels?
+
+
+Find:
+Look through the X-Fast's bottom level hash table
+for a pointer to the matching top of the skilist
+
+
+Insert:
+Insert into the skiplist from bottom to top,
+if top is reached keep track of pointer and add to x-tree (top to bottom)
+x-tree connects to 2 pointers, create as many levels as necessary
+
+Delete:
+

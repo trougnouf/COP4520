@@ -1,0 +1,17 @@
+#ifndef INIT_H
+#define INIT_H
+
+#define MAXTHREADS 4
+
+#include <pthread.h>
+
+#include "skiplist.h"
+
+
+
+
+
+#endif
+
+
+

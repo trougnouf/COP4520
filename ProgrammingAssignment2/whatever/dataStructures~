@@ -1,0 +1,36 @@
+SkipTrie
+	X-Fast Trie
+		Doubly-linked list
+		Hash table
+	Skiplist
+		Single linked-list w/levels
+		
+# X-Fast Trie:
+top
+contains only prefixes? (no values)
+
+# Skiplist:
+"log log u levels" "where u is the size of the key space"
+let u = 2^30 = 2147483648 = 1073741824
+log log u = 3.0346 ≅ 4
+resources:
+https://en.wikipedia.org/wiki/Skip_list
+https://www.cs.auckland.ac.nz/~jmor159/PLDS210/niemann/s_skl.txt
+p334
+
+X-Fast Trie
+
+
+
+Find:
+Look through the X-Fast's bottom level hash table
+for a pointer to the matching top of the skilist
+
+
+Insert:
+Insert into the skiplist from bottom to top,
+if top is reached keep track of pointer and add to x-tree (top to bottom)
+
+
+Delete:
+
