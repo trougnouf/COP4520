@@ -10,32 +10,37 @@ Sandbox
 #include <stdlib.h>
 #include <stdint.h>
 
-#define slLEVELS 16
-uint8_t coinflipper();
-uint8_t fancycoinflipper();
+#define slLEVELS 5
+
+typedef struct slNode_ {
+	int key;
+	struct slNode_ ** next;	// pointer to variable array
+	struct slNode_ * previous;
+} slNode;
 
 int main()
 {
-	int coin = rand();
-	printf("%u\n", coinflipper());
-	printf("%u\n", coinflipper());
+	slNode * slHead = malloc( sizeof(slNode));
+	slHead->next = malloc(sizeof(slNode*)*slLEVELS);
+	
+	slNode * anode = malloc( sizeof(slNode));
+	anode->next = malloc(sizeof(slNode*)*slLEVELS );
+	
+	slNode * bnode = malloc( sizeof(slNode));
+	bnode->next = malloc(sizeof(slNode*)*slLEVELS );
+	slNode * cnode = malloc( sizeof(slNode));
+	cnode->next = malloc(sizeof(slNode*)*slLEVELS );
+	slNode * dnode = malloc( sizeof(slNode));
+	dnode->next = malloc(sizeof(slNode*)*slLEVELS );
+	slNode * enode = malloc( sizeof(slNode));
+	enode->next = malloc(sizeof(slNode*)*slLEVELS );
+	slNode * fnode = malloc( sizeof(slNode));
+	fnode->next = malloc(sizeof(slNode*)*slLEVELS );
+	slHead->next[0] = anode;
+	anode->previous = slHead;
+	anode->next[0] = bnode;
+	anode->next[1] = cnode;
+	anode->next[2] = dnode;
+	printf("%d %d\n", slHead, anode->previous);
 }
 
-uint8_t coinflipper()
-{
-	int coin = rand();
-	int shift = 1;
-	uint8_t result = 0;
-	for(uint8_t i=0; i<32; i++)
-	{
-		if(coin&shift)	result++;
-		else		return result;
-		shift<<=1;
-	}
-	return result;
-}
-
-uint8_t fancycoinflipper()
-{
-	return (uint8_t)(1230 % ((slLEVELS * 2)+1));
-}

@@ -24,4 +24,4 @@ Change these values to generate a different test case.
 		2: spam
 		500+: display task# every n tasks
 */
-#define VERBOSE 100000
+#define VERBOSE 0

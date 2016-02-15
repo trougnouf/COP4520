@@ -10,7 +10,8 @@ initialize skiplist with tail=NULL
 */
 slNode * slInit()
 {
-	slNode * slHead = malloc( sizeof(slNode) + sizeof(slNode*)*slLEVELS );
+	slNode * slHead = malloc( sizeof(slNode));
+	slHead->next = malloc(sizeof(slNode*)*slLEVELS );
 	for(uint8_t i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
 	return slHead;
 }
@@ -66,8 +67,8 @@ char slInsert(slNode * slHead, int newKey)
 	}
 	// Step 2: Insert on the right of curNode for each level
 	uint8_t numLv = flipcoins();
-	slNode * newNode = malloc(sizeof(slNode) +
-					   sizeof(slNode*)*(numLv));
+	slNode * newNode = malloc(sizeof(slNode));
+	newNode->next = malloc(sizeof(slNode*)*(numLv));
 	newNode->key = newKey;
 	for(lv=0; lv < numLv; lv++)
 	{

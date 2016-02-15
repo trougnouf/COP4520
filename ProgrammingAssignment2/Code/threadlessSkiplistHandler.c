@@ -31,10 +31,10 @@ int main()
 	{
 		nextTask = rand() % 2;
 		if(nextTask)	printf("%d: %d\n", testKeys[i], slInsert(slHead, testKeys[i]));
-		else
-		{	printf("d%d: ",testKeys[i]);
-			printf("%d\n", slRemove(slHead, testKeys[i]));
-		}
+		//else
+		//{	printf("d%d: ",testKeys[i]);
+		//	printf("%d\n", slRemove(slHead, testKeys[i]));
+		//}
 	
 	
 		if(i%1000==0)	printf("%d\n", i);
