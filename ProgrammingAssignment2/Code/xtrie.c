@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define XSIZE 9
-#define MID 4
+#define XSIZE 31
+#define MID 15
 #define BASE 0
 
 /**struct for each node in x-trie.
