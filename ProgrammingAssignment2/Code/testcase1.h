@@ -11,9 +11,9 @@ Change these values to generate a different test case.
 
 
 // Used in test case
-#define PERCENTINSERT 34
-#define PERCENTFIND 33
-#define PERCENTREMOVE 33
+#define PERCENTINSERT 100
+#define PERCENTFIND 0
+#define PERCENTREMOVE 0
 
 #endif
 
@@ -24,4 +24,4 @@ Change these values to generate a different test case.
 		2: spam
 		500+: display task# every n tasks
 */
-#define VERBOSE 0
+#define VERBOSE 10000

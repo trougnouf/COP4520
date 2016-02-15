@@ -20,6 +20,10 @@ typedef struct slNode_ {
 	int key;
 	// int data // or use key as data
 	struct slNode_ * next[1];
+	
+	// interact with the x-fast trie
+	struct slNode_ * previous;
+	char removing;
 } slNode;
 
 
