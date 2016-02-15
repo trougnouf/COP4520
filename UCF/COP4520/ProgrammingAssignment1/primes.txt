@@ -1,1 +1,0 @@
-Execution time: 21110724.000000Execution time: 27810274.000000Execution time: 32403326.000000

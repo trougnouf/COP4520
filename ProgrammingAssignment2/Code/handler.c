@@ -4,11 +4,12 @@ or test case.
 */
 
 /*
-TODO: Add x-fast trie functions to switch() statement
+TODO: Add x-fast trie functions to switch() statements
 */
 #include <stdint.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <stdatomic.h>
 
 #include "handler.h"
 #include "testcase1.h"
@@ -18,100 +19,76 @@ TODO: Add x-fast trie functions to switch() statement
 void* thread_dsHandler(void* args)
 {
 	pthreadData * sharedData = (pthreadData *)args;
+	Task * todolist = sharedData->todolist;
 	char retStat;
-	//#if VERBOSE
-	struct timeval idleTimerBeg;
-	double idleTimerTot = 0;
-	//#endif
-	/*
-	// Trying to speedup, this made virtually no difference
-	for(;;)
-	{
-		while(sharedData->curState == IDLE);
-		if(sharedData->curState == INSERT)
-		{
-			slInsert(sharedData->slHead, sharedData->ioData);
-		}
-		else if(sharedData->curState == FIND)
-		{
-			slFind(sharedData->slHead, sharedData->ioData);
-		}
-		else if(sharedData->curState == REMOVE)
-		{
-			slRemove(sharedData->slHead, sharedData->ioData);
-		}
-		else
-		{
-			pthread_exit(NULL);
-		}
-		sharedData->curState = IDLE;
-	}
-	*/
-	
+	int tsk;	// counter
 	for(;;)
 	{
 
-		#if VERBOSE
-		printf(	"Thread: %d, Task: %d, data: %d\n",
-		sharedData, sharedData->curState, sharedData->ioData);
+		// get global position from shared todolist and increment
+		tsk = atomic_fetch_add(sharedData->tsknum, 1);
+		
+		#if VERBOSE == 1
+			printf("thread %d processing task#\t%d (%d, %d)\n", 
+				sharedData, tsk, todolist[tsk].task, todolist[tsk].inData);
 		#endif
-		switch(((pthreadData *)args)->curState)
+		
+		
+		switch(todolist[tsk].task)
 		{
 			// define thread behavior here (and/or call functions)
 			case FIND:
-				retStat = (slFind(sharedData->slHead, sharedData->ioData)!=NULL);
-				#if VERBOSE
+				// 1=found, 0=404
+				retStat =	(slFind(sharedData->slHead,
+						todolist[tsk].inData)!=NULL);
+				#if VERBOSE == 3
 				printf(	"Found %d in skiplist: %d\n",
-				sharedData->ioData, retStat);
+					todolist[tsk].inData, retStat);
 				#endif
-				//...
-				sharedData->curState = IDLE;
+				//TODO xfind()
 				break;
 			case INSERT:
-				retStat = slInsert(sharedData->slHead, sharedData->ioData);
-				#if VERBOSE
+				// -1=already exists, 0=success(done), 1=sucess
+				//     (top-level reached, x-fast trie required)
+				retStat =	slInsert(sharedData->slHead,
+						todolist[tsk].inData);
+				#if VERBOSE == 3
 				printf(	"Added %d to skiplist: %d\n",
-					sharedData->ioData, retStat);
+					todolist[tsk].inData, retStat);
 				#endif
 				if(retStat == 1)
 					;//TODO call xInsert()
-				sharedData->curState = IDLE;
+				//curTask = IDLE;
 				break;
 			case REMOVE:
-				retStat = slRemove(sharedData->slHead, sharedData->ioData);
+				// 0=success, -1=404
+				retStat =	slRemove(sharedData->slHead,
+						todolist[tsk].inData);
 				//...
-				#if VERBOSE
+				#if VERBOSE == 3
 				printf(	"Removed %d from skiplist: %d\n",
-					sharedData->ioData, retStat);
+					todolist[tsk].inData, retStat);
 				#endif
-				sharedData->curState = IDLE;
-				break;
-			case IDLE:
-				gettimeofday(&idleTimerBeg, NULL);
-				while(sharedData->curState == IDLE);
-				idleTimerTot += getTimeElapsed(&idleTimerBeg);
+				//todolist[tsk].inData = IDLE;
 				break;
 			case TERM:
-				#if VERBOSE
-				printf(	"Thread: %d, Task: %d, Goodbye.\n",
-				sharedData, sharedData->curState);
+				#if VERBOSE == 3
+				printf(	"Thread: %d: Goodbye.\n",
+				sharedData);
 				#endif
-				printf("Wasted %lfs idling.\n", idleTimerTot);
 				pthread_exit(NULL);
 				break;
-			
+			default:
+				break;
 		}
-		
 	}
-	
 }
-
-
 
 int main()
 {
 	// load test case
-	Task * todoList = loadTestCase();
+	Task * todolist = loadTestCase();
+	atomic_int curTaskNum = 0;
 	
 	// start timer
 	struct timeval begTime;
@@ -125,33 +102,18 @@ int main()
 	pthreadData threadData[NUMTHREADS];
 	for(uint8_t i=0; i<NUMTHREADS; i++)
 	{
-		threadData[i].curState = IDLE;
 		threadData[i].slHead = slHead;
-		pthread_create(&threads[i], NULL, thread_dsHandler, (void *) &threadData[i]);
+		threadData[i].todolist = todolist;
+		threadData[i].tsknum = &curTaskNum;
+		pthread_create(	&threads[i], NULL, thread_dsHandler,
+				(void *) &threadData[i]);
 	}
 	
-	// task and thread scheduler
-	uint8_t thr;
-	for(int tsk=0; tsk < NUMTASKS;)
-	{
-		for(thr=0; thr<NUMTHREADS; thr++)
-		{
-			if(threadData[thr].curState == IDLE)
-			{
-				threadData[thr].ioData = todoList[tsk].inData;
-				threadData[thr].curState = todoList[tsk].task;
-				tsk++;
-				#if VERBOSE == 2
-				printf("%d tasks remaining\n", NUMTASKS-tsk);
-				#endif
-			}
-		}
-	}
 	// terminate all threads
 	for(uint8_t thr=0; thr<NUMTHREADS; thr++)
 	{
-		while(threadData[thr].curState != IDLE);
-		threadData[thr].curState = TERM;
+		//while(threadData[thr].curState != IDLE);
+		//threadData[thr].curState = TERM;
 		pthread_join(threads[thr], NULL);
 	}
 	printResults(&begTime);

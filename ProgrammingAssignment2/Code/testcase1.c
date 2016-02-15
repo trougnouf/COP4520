@@ -5,11 +5,12 @@
 
 Task * loadTestCase()
 {
-	Task * todolist = malloc(NUMTASKS * sizeof(Task));
+	Task * todolist = malloc((NUMTASKS+NUMTHREADS) * sizeof(Task));
 	
 	State randTask;
 	char randNum;
-	for(int i=0; i < NUMTASKS; i++)
+	int i;
+	for(i=0; i < NUMTASKS; i++)
 	{
 		// set tasks here
 		randNum = rand() % 101;
@@ -20,5 +21,6 @@ Task * loadTestCase()
 		todolist[i].inData = rand() % 1073741824;
 		
 	}
+	for(;i<NUMTASKS+NUMTHREADS; i++)	todolist[i].task = TERM;
 	return todolist;
 }

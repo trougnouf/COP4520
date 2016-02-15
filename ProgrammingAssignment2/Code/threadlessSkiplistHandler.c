@@ -1,7 +1,7 @@
 #include "skiplist.h"
 #include <sys/time.h>
 
-#define NUMKEYS 50000
+#define NUMKEYS 500000
 #define VERBOSE 1
 
 double getTimeElapsed(struct timeval * begTime);
@@ -21,11 +21,12 @@ int main()
 	// init Data Structures
 	slNode * slHead = slInit();
 	
-	char returnFlag;
+	//char returnFlag;
 	
 	for(int i=0; i<NUMKEYS; i++)
 	{
-		returnFlag = slInsert(slHead, testKeys[i]);
+		//returnFlag = slInsert(slHead, testKeys[i]);
+		slInsert(slHead, testKeys[i]);
 	}
 	
 	printf("Time elapsed:\n\t%lfs\n", getTimeElapsed(&begTime));

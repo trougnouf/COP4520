@@ -2,8 +2,9 @@
 #define HANDLER_H
 
 #include "skiplist.h"
+#include <stdatomic.h>
 
-typedef enum State {FIND, INSERT, REMOVE, IDLE, TERM} State;
+typedef enum State {FIND, INSERT, REMOVE, TERM} State;
 
 // Used to create tests in the test file.
 typedef struct
@@ -15,10 +16,10 @@ typedef struct
 // Thread IO
 typedef struct
 {
-	State curState;
-	int ioData;
-	slNode * resultNode;
-	
+	// int ioData;		// currently unnecessary
+	// slNode * resultNode;	// currently unnecessary
+	atomic_int * tsknum;
+	Task * todolist;
 	slNode * slHead;
 } pthreadData;
 
