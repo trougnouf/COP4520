@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 
 /*
@@ -10,85 +11,18 @@ initialize skiplist with tail=NULL
 slNode * slInit()
 {
 	slNode * slHead = malloc( sizeof(slNode) + sizeof(slNode*)*slLEVELS );
-	for(char i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
+	for(uint8_t i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
 	return slHead;
-}
-
-/* Insert key into skiplist.
-return -1: newKey exists
-return 0:  sucess, nothing left to do
-return 1:  sucess, top-level reached (x-fast trie required)
-*/
-char slInsert(slNode * slHead, int newKey)
-{
-/*
-1: find preceding bottom node by going through the nodes/level starting on top
-2: add after that node
-3: randomly add to higher levels
-
-for each level (except bottom?):
-	if curNode is smaller
-		if nextNode != NULL && nextNode is smaller: curNode = nextNode
-		else: go down
-bottom: if nextNode = NULL or nextNode is bigger, become nextNode
-if (coinflip): randomly add to higher level
-	find previous node and next node that have a higher level
-*/
-	
-	//slNode * curNode = slHead;
-	slNode * curNode[slLEVELS];
-	curNode[slLEVELS-1] = slHead;
-	char lv;
-	// create a path from top to bottom
-	for(lv = slLEVELS-1; lv > 0; lv--)
-	{
-		while((*curNode[lv]).key < newKey)	// if curNode is smaller
-		{
-			if(curNode[lv]->next[lv] && (*curNode[lv]->next[lv]).key<newKey)
-			{
-				curNode[lv] = curNode[lv]->next[lv];
-			}
-			else	// keep track of closestNode and go down
-			{
-				curNode[lv-1] = curNode[lv];
-				break;
-			}
-		}
-	}
-	for(;;)	// bottom reached; create and add node
-	{
-		if(!(curNode[lv]->next[lv]) || (*curNode[lv]->next[lv]).key>newKey)
-		{ // become next node
-		if(newKey == (*curNode[lv]).key)	return -1;
-			int coin = rand() % (slLEVELS*2)+1;
-			slNode * newNode = malloc(sizeof(slNode) +
-					   sizeof(slNode*)*((slLEVELS*2)/coin));
-			(*newNode).key = newKey;
-			for(lv = 0; lv < slLEVELS; lv++)
-			{
-
-				if((coin) <= (slLEVELS*2)/(lv+1))
-				{
-					newNode->next[lv] = curNode[lv]->next[lv];
-					curNode[lv]->next[lv] = newNode;
-					if(lv == slLEVELS-1)	return 1;
-				}
-				else return 0;
-			}
-			break;
-		}
-		else curNode[lv] = curNode[lv]->next[lv];
-	}
 }
 
 // return a pointer to the node which contains the desired key, or NULL if 404
 slNode * slFind(slNode * slHead, int key)
 {
 	slNode * curNode = slHead;
-	char lv = slLEVELS-1;
+	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
-		if(!(*curNode).next[lv] || (*(*curNode).next[lv]).key>key)
+		if(!curNode->next[lv] || curNode->next[lv]->key > key)
 		{
 			if(lv)
 			{
@@ -103,6 +37,47 @@ slNode * slFind(slNode * slHead, int key)
 	}
 }
 
+/* Insert key into skiplist.
+return -1: newKey exists
+return 0:  sucess, nothing left to do
+return 1:  sucess, top-level reached (x-fast trie required)
+*/
+char slInsert(slNode * slHead, int newKey)
+{
+	// Step 1: Find bottom node to insert on the right of
+	slNode * curNode[slLEVELS];
+	curNode[slLEVELS-1] = slHead;
+	uint8_t lv = slLEVELS-1;
+	for(;;)
+	{
+		if(!curNode[lv]->next[lv] || curNode[lv]->next[lv]->key > newKey)
+		{
+			if(lv)
+			{
+				lv--;
+				curNode[lv] = curNode[lv+1];
+				continue;
+			}
+			break;	// All the way down
+		}
+		if(curNode[lv]->next[lv]->key == newKey)
+			return -1;	// found
+		curNode[lv]= curNode[lv]->next[lv];	// go right
+	}
+	// Step 2: Insert on the right of curNode for each level
+	uint8_t numLv = flipcoins();
+	slNode * newNode = malloc(sizeof(slNode) +
+					   sizeof(slNode*)*(numLv));
+	newNode->key = newKey;
+	for(uint8_t lv=0; lv < numLv; lv++)
+	{
+		newNode->next[lv] = curNode[lv]->next[lv];
+		curNode[lv]->next[lv] = newNode;
+	}
+	if(numLv == slLEVELS)	return 1;
+	return 0;
+}
+
 /*
 Remove node whose value matches key
 return 0 if successful
@@ -110,34 +85,51 @@ return -1 if 404
 */
 char slRemove(slNode * slHead, int key)
 {
-	char lv = slLEVELS-1;
-	slNode * curNode[slLEVELS];
+	slNode * curNode = slHead;
 	slNode * target;
-	curNode[lv] = slHead;
+	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
-		// go down?
-		if(!(curNode[lv]->next[lv]) || (*curNode[lv]->next[lv]).key>key)
+		if(!curNode->next[lv] || curNode->next[lv]->key > key)
 		{
 			if(lv)
 			{
-				curNode[lv-1] = curNode[lv--];
+				lv--;
 				continue;
 			}
 			return -1;
 		}
-		// target acquired?
-		if((*(*curNode[lv]).next[lv]).key == key)
+		if(curNode->next[lv]->key == key)
 		{
-			target = curNode[lv]->next[lv];	
-			break;
+			target = curNode->next[lv];
+			curNode->next[lv] = target->next[lv];
+			if(lv)
+			{
+				lv--;
+				continue;
+			}
+			else
+			{
+				free(target);
+				return 0;
+			}
 		}
-		// go right
-		curNode[lv] = (*curNode[lv]).next[lv];
+		curNode=(*curNode).next[lv];	// go right
 	}
-	// eliminate target
-	for(;lv >= 0; lv--)	curNode[lv]->next[lv] = target[lv].next[lv];
-	free(target);
-	return 0;
+}
+
+uint8_t flipcoins()
+{
+	int coin = rand();
+	int shift = 1;
+	uint8_t result = 0;
+	for(uint8_t i=0; i<32; i++)
+	{
+		if(coin&shift)	result++;
+		else		break;
+		shift<<=1;
+	}
+	
+	return (result>=slLEVELS)?slLEVELS:result+1;
 }
 

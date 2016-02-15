@@ -6,14 +6,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <stdint.h>
 
 /*
 "log log u levels" "where u is the size of the key space"
 let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
-#define slLEVELS 4	//TODO dynamic levels
+#define slLEVELS 16	//TODO dynamic levels
 
 
 typedef struct slNode_ {
@@ -48,5 +48,6 @@ return -1 if 404
 */
 char slRemove(slNode * slHead, int key);
 
+uint8_t flipcoins();
 
 #endif

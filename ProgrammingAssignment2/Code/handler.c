@@ -18,6 +18,9 @@ TODO: Add x-fast trie functions to switch() statements
 
 void* thread_dsHandler(void* args)
 {
+	#if VERBOSE == 1
+	setbuf(stdout, NULL);
+	#endif
 	pthreadData * sharedData = (pthreadData *)args;
 	Task * todolist = sharedData->todolist;
 	char retStat;
@@ -30,7 +33,11 @@ void* thread_dsHandler(void* args)
 		
 		#if VERBOSE == 1
 			printf("thread %d processing task#\t%d (%d, %d)\n", 
-				sharedData, tsk, todolist[tsk].task, todolist[tsk].inData);
+				sharedData, tsk, todolist[tsk].task,
+				todolist[tsk].inData);
+		#endif
+		#if VERBOSE > 500
+			if(tsk%VERBOSE == 0)	printf("Task %d\n", tsk);
 		#endif
 		
 		
@@ -124,6 +131,7 @@ void printResults(struct timeval * begTime)
 	printf("The end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
 	printf(	"Tasks breakdown (%%):\n\tinsert: %d, find: %d, remove: %d\n",
 		PERCENTINSERT, PERCENTFIND, PERCENTREMOVE);
+	printf("Skip list: %d levels.\n", slLEVELS);
 	printf("Time elapsed:\n\t%lfs\n", getTimeElapsed(begTime));
 }
 

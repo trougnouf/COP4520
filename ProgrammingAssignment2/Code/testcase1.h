@@ -6,14 +6,14 @@ Change these values to generate a different test case.
 */
 
 // Used elsewhere
-#define NUMTHREADS 4		// used in handler.c
-#define NUMTASKS 20000*NUMTHREADS	// used in handler.c and testcase1.c
+#define NUMTHREADS 1		// used in handler.c
+#define NUMTASKS 500000*NUMTHREADS	// used in handler.c and testcase1.c
 
 
 // Used in test case
-#define PERCENTINSERT 100
-#define PERCENTFIND 0
-#define PERCENTREMOVE 0
+#define PERCENTINSERT 34
+#define PERCENTFIND 33
+#define PERCENTREMOVE 33
 
 #endif
 
@@ -22,5 +22,6 @@ Change these values to generate a different test case.
 		0: Result only
 		1: Display each task
 		2: spam
+		500+: display task# every n tasks
 */
 #define VERBOSE 0
