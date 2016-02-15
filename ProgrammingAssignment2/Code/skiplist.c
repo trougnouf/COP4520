@@ -69,29 +69,15 @@ char slInsert(slNode * slHead, int newKey)
 	slNode * newNode = malloc(sizeof(slNode) +
 					   sizeof(slNode*)*(numLv));
 	newNode->key = newKey;
-	newNode->previous = NULL;
 	for(lv=0; lv < numLv; lv++)
 	{
-		
 		newNode->next[lv] = curNode[lv]->next[lv];
 		curNode[lv]->next[lv] = newNode;
 		
 	}
 	if(numLv == slLEVELS)
 	{
-		// setbuf(stdout, NULL);	// useful for debug
-		
-		// this shows that curNode[lv-1] is indeed what I want as previous
-		printf("%d ", curNode[lv-1]->next[lv-1]);
-		printf("%d ", newNode);
-		
-		// this appears to have a valid pointer address even though it's
-		// never set
-		printf("%d \n", newNode->previous);
-		
-		// this should be called but it hangs forever
-		//newNode->previous = curNode[lv-1];
-
+		newNode->previous = curNode[lv-1];
 		return 1;
 	}
 	return 0;
@@ -121,6 +107,7 @@ char slRemove(slNode * slHead, int key)
 		if(curNode->next[lv]->key == key)
 		{
 			target = curNode->next[lv];
+			target->removing = 1;
 			curNode->next[lv] = target->next[lv];
 			if(lv)
 			{
