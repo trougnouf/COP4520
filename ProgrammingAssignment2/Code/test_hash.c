@@ -4,6 +4,7 @@
 
 #define XSIZE 9
 #define MID 4
+#define BASE 0
 
 /**struct for each node in x-trie.
     Add back pointer to point to parent node to help predecessor/successor function??**/
@@ -11,8 +12,22 @@ typedef struct x_trie_node {
     int key;
     struct x_trie_node *left;
     struct x_trie_node *right;
+    struct x_trie_node *back;
     UT_hash_handle hh[XSIZE];
 } x_node;
+
+/**initialize xnode trie**/
+x_node *initialize_trie(){
+
+    x_node *root = NULL;
+    root = (x_node*)malloc(sizeof(x_node));
+    root->key = 0;
+    root->left = NULL;
+    root->right = NULL;
+    root->back = NULL;
+    return root;
+
+}
 
 /**Find if key value is in the hash table at a specific level in the level search structure (LSS).
 Returns null if not found.*/
@@ -118,6 +133,7 @@ void insert_x_trie(int key, int level, x_node **LSS, x_node *leaf){
             tmp-> key = tmpKey;
             tmp->left = NULL;
             tmp->right = NULL;
+            tmp->back = leaf;
             leaf->left = tmp;
             //printf("add to hash level %d\n", level-1);
             HASH_ADD(hh[level-1],LSS[level-1], key, sizeof(int),tmp);
@@ -131,6 +147,7 @@ void insert_x_trie(int key, int level, x_node **LSS, x_node *leaf){
             tmp->key = tmpKey;
             tmp->left = NULL;
             tmp->right = NULL;
+            tmp->back = leaf;
             leaf->right = tmp;
             //printf("add to hash level %d\n", level-1);
             HASH_ADD(hh[level-1],LSS[level-1], key, sizeof(int),tmp);
@@ -148,6 +165,64 @@ void insert_x_trie(int key, int level, x_node **LSS, x_node *leaf){
         }
 
 
+    }
+
+}
+
+void delete_x_trie(int key, int level, x_node **LSS, x_node *leaf){
+
+    int mask = 1<<level-1;
+    int combine = key & mask;
+    int direction = combine>>level-1;
+
+    x_node *tmp = leaf->back;
+
+    /**  If in LSS[0]
+    TODO: at root level, connect pred(prev?) and succ before deletion**/
+    if(level == 0){
+
+        HASH_DELETE(hh[level], LSS[level], leaf);
+        free(leaf);
+        delete_x_trie(key, level+1, LSS, tmp);
+    }
+
+    else if(level == XSIZE-1){
+        return;
+    }
+
+    else{
+
+        if(direction == 0){
+
+            leaf->left = NULL;
+
+            /**if prefix has another child, do not delete prefix**/
+            if(leaf->right != NULL){
+
+                return;
+            }
+            else{
+
+                tmp = leaf->back;
+                HASH_DELETE(hh[level],LSS[level], leaf);
+                free(leaf);
+                delete_x_trie(key,level+1, LSS, tmp);
+            }
+        }
+        else{
+
+            leaf->right = NULL;
+
+            if(leaf->left != NULL){
+                return;
+            }
+            else{
+                tmp = leaf->back;
+                HASH_DELETE(hh[level],LSS[level],leaf);
+                free(leaf);
+                delete_x_trie(key,level+1,LSS,tmp);
+            }
+        }
     }
 
 }
@@ -175,22 +250,42 @@ int main(int argc,char *argv[]){
 
     //initialize x-trie root node
     x_node *root = NULL;
-    root = (x_node*)malloc(sizeof(x_node));
+
+    root = initialize_trie();
+   /* root = (x_node*)malloc(sizeof(x_node));
     root->key = 0;
     root->left = NULL;
     root->right = NULL;
+    root->back = NULL;*/
     HASH_ADD(hh[XSIZE-1],LSS[XSIZE-1],key,sizeof(int),root);
 
     //test inserts
     insert_x_trie(key2, XSIZE-1, LSS, root);
     insert_x_trie(key1,XSIZE-1,LSS,root);
+    insert_x_trie(key3,XSIZE-1,LSS,root);
+    insert_x_trie(key4,XSIZE-1,LSS,root);
 
     //test find ancestor
-    find_ancestor(key3,MID,LSS);
-    find_ancestor(key4,MID,LSS);
+    //find_ancestor(key3,MID,LSS);
+   // find_ancestor(key4,MID,LSS);
 
 //test code for printing values in hash table
-   /*for(j=XSIZE-1;j>=0;j--){
+    x_node *tstroot = NULL;
+   for(j=XSIZE-2;j>=0;j--){
+
+        printf("hashes as LSS level %d\n", j);
+       for(tstroot=LSS[j]; tstroot != NULL; tstroot=(x_node*)(tstroot->hh[j].next)) {
+        printf("key %d, ", tstroot->key);
+        }
+        printf("\n");
+
+   }
+/*
+   x_node *tstDelete = NULL;
+   tstDelete = find_key(key4,BASE,LSS);
+   delete_x_trie(key4,BASE,LSS,tstDelete);
+
+   for(j=XSIZE-2;j>=0;j--){
 
         printf("hashes as LSS level %d\n", j);
        for(tstroot=LSS[j]; tstroot != NULL; tstroot=(x_node*)(tstroot->hh[j].next)) {
