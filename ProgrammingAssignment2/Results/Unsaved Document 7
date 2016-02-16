@@ -1,0 +1,59 @@
+Task 500000
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	125.716087s
+[trougnouf@pc Code]$ 
+
+(increased # of levels from 4 to 16)
+
+
+
+
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	353.432628s
+[trougnouf@pc Code]$ 
+(8 levels)
+
+
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	79.681118s
+[trougnouf@pc Code]$ 
+(24levels)
+
+
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	24.463321s
+(64levels)
+
+
+Task 500000
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	10.403439s
+(127levels)
+
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 100, find: 0, remove: 0
+Time elapsed:
+	9.857919s
+[trougnouf@pc Code]$ 
+(254levels)

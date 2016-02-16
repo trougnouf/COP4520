@@ -1,2 +1,0 @@
-Run:
-gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out

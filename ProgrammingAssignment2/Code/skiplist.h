@@ -13,7 +13,7 @@
 let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
-#define slLEVELS 16	//TODO dynamic levels
+#define slLEVELS 4	//TODO dynamic levels
 
 
 typedef struct slNode_ {

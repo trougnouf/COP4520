@@ -1,0 +1,399 @@
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 16 levels.
+Time elapsed:
+	0.995659s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 16 levels.
+Time elapsed:
+	0.456966s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 16 levels.
+Time elapsed:
+	0.668343s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 16 levels.
+Time elapsed:
+	3.925073s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 8 levels.
+Time elapsed:
+	163.963169s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 8 levels.
+Time elapsed:
+	28.030096s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 8 levels.
+Time elapsed:
+	8.421152s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 8 levels.
+Time elapsed:
+	3.237801s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+         xThe end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 4 levels.
+Time elapsed:
+	125.281050s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 32 levels.
+Time elapsed:
+	0.486938s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 32 levels.
+Time elapsed:
+	0.703730s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 32 levels.
+Time elapsed:
+	0.917991s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 32 levels.
+Time elapsed:
+	3.547862s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 34, find: 33, remove: 33
+Skip list: 64 levels.
+Time elapsed:
+	3.793403s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 64 levels.
+Time elapsed:
+	3.071949s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 64 levels.
+Time elapsed:
+	0.819840s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 64 levels.
+Time elapsed:
+	0.635469s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 64 levels.
+Time elapsed:
+	0.499462s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 16 levels.
+Time elapsed:
+	0.376779s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 16 levels.
+Time elapsed:
+	0.489676s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 16 levels.
+Time elapsed:
+	0.864115s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 20, find: 60, remove: 20
+Skip list: 16 levels.
+Time elapsed:
+	3.517270s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	4.853561s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	1.491076s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.943954s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.655403s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	0.718322s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	0.945865s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	1.456308s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	4.552659s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	2.342136s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	0.566595s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	0.404995s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 32 levels.
+Time elapsed:
+	0.303515s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.250450s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.364168s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.600258s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	2.080276s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 16 levels.
+Time elapsed:
+	2.240176s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 16 levels.
+Time elapsed:
+	0.537178s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 16 levels.
+Time elapsed:
+	0.365717s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 16 levels.
+Time elapsed:
+	0.249403s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 1, tasks: 500000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 32 levels.
+Time elapsed:
+	0.289373s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 32 levels.
+Time elapsed:
+	0.397467s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 4, tasks: 2000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 32 levels.
+Time elapsed:
+	0.577230s
+[trougnouf@pc Code]$ gcc -lpthread handler.c testcase1.c skiplist.c && ./a.out 
+The end.
+	Threads: 8, tasks: 4000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 32 levels.
+Time elapsed:
+	2.302058s
+[trougnouf@pc Code]$ 
+
+
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 80, find: 10, remove: 10
+Skip list: 8 levels.
+Time elapsed:
+	30.255755s
+
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 8 levels.
+Time elapsed:
+	1.930917s
+
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 80, remove: 10
+Skip list: 4 levels.
+Time elapsed:
+	68.928917s
+
+	Threads: 2, tasks: 1000000
+Tasks breakdown (%):
+	insert: 10, find: 10, remove: 80
+Skip list: 8 levels.
+Time elapsed:
+	1.958623s
+
