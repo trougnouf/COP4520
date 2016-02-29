@@ -12,18 +12,20 @@ How to run this project:
 	This program requires a recent version of the GCC compiler (>=4.9)
 	because it includes the C11 <stdatomic.h> library.
 
-	
+
 
 Original research paper URL:
 	http://groups.csail.mit.edu/mag/oshman-shavit-podc13.pdf
 
 Introduction:
-	The SkipTrie is a search structure that implements an algorithm similar
-	to the Y-fast trie, using a skiplist instead of a number of binary
-	trees. 
-	Y-Fast Trie algorithm
-	using a Skiplist 
-	We implemented an elementary version of the SkipTrie algorithm
+	We implemented an elementary version of the SkipTrie, an algorithm
+	that implements a search structure similar to the Y-fast trie. The
+	Y-fast trie data structure consists of an X-fast trie (on top) linked to a series of balanced binary search trees (on the bottom). The SkipTrie replaces the balanced binary trees with a single skiplist.
+	
+	
+	The bottom leaves of the x-fast trie connect to the top nodes of the skip list iff t
+
+
 	
 Data structures:
 		Skip list:
