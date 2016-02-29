@@ -1,0 +1,23 @@
+sequential: event get immediate response
+linear:	event gets logical response
+
+
+Two enqueuing threads (t1 then t2) get the slot# at the same time (line #8)
+t2 executes compareAndSet (l#9) while t1 fails and restarts the loop. t1 now has a slot number higher than t2, which is not the expected outcome.
+
+Let us start with an empty queue
+
+Expected behavior for linearity:
+enq(23)	deq()	enq(56)	deq 
+void	23	void	56
+
+enq(23)	enq(56)	deq()	deq()
+void	void	23	56
+
+possible nonlinear outcome:
+enq(23)	enq(56)	deq()	deq()
+void	void	56	23
+
+This happened as enq(56) completed before enq(23), because enq(56) completed tail.compareAndSet(0,1) while enq(23) had to start over with slot = 1.
+
+The deq() method does not fail linearity for this reason. It doesn't matter which threads completes compareAndSet first because the first thread to finish will pull the highest slot as expected.
