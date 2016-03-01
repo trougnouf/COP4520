@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Link to divfor/atomic_hash: A lock-free hash table that eanble multiple threads can concurrently read/write/delete up to 10M ops/s in mordern computer platform
+Type=Link
+URL=https://github.com/divfor/atomic_hash
+Icon=text-html
