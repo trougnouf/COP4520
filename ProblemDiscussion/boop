@@ -1,0 +1,10 @@
+Expected behavior for linearity:
+enq(23)	deq()	enq(56)	deq 
+void	23	void	56
+
+enq(23)	enq(56)	deq()	deq()
+void	void	23	56
+
+possible nonlinear outcome:
+enq(23)	enq(56)	deq()	deq()
+void	void	56	23
