@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdatomic.h>
 
 
 /*
@@ -72,9 +73,14 @@ char slInsert(slNode * slHead, int newKey)
 	newNode->key = newKey;
 	for(lv=0; lv < numLv; lv++)
 	{
-		newNode->next[lv] = curNode[lv]->next[lv];
-		curNode[lv]->next[lv] = newNode;
-		
+		// Using Harris' solution: 
+		// make newnode's next pointer point to curnode's next node
+		slNode * tmpnextnode = curNode[lv]->next[lv];
+		newNode->next[lv] = tmpnextnode;
+		// make curnode's next pointer point to new node iff curnode
+		// hasn't changed, else start over.
+		if(!atomic_compare_exchange_strong(&curNode[lv]->next[lv], &tmpnextnode, newNode))
+			lv--;	// start over	
 	}
 	if(numLv == slLEVELS)
 	{

@@ -1,0 +1,18 @@
+https://en.wikipedia.org/wiki/Non-blocking_linked_list
+
+each node has a marked bit (supposedly stored w/ the pointer)
+
+nextpointer = 
+newnode.next = nextpointer
+
+
+
+//back pointer to recover if node is deleted (already in place)
+
+boolean flag "stop" to stop insertion upon deletion
+
+
+funct listSearch(x,start) returns left.key<k<=right.key (for cleanup, unlinks)
+
+Each insertion is conditioned on the
+stop flag of the root remaining unset.

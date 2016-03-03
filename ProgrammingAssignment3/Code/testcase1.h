@@ -11,9 +11,9 @@ Change these values to generate a different test case.
 
 
 // Used in test case
-#define PERCENTINSERT 10
+#define PERCENTINSERT 70
 #define PERCENTFIND 10
-#define PERCENTREMOVE 80
+#define PERCENTREMOVE 20
 
 #define VERBOSE 0
 // debugging
