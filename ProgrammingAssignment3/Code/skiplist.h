@@ -15,14 +15,12 @@ log log u = 3.0346 ≅ 4
 */
 #define slLEVELS 16	//TODO dynamic levels
 
-
 typedef struct slNode_ {
-	int key;
+	uint32_t key;
 	struct slNode_ ** next;
 	// interact with the x-fast trie
 	struct slNode_ * previous;
-	char removing;
-
+	uint8_t stopflag;
 } slNode;
 
 
@@ -38,18 +36,22 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-char slInsert(slNode * slHead, int newKey);
+int8_t slInsert(slNode * slHead, uint32_t newKey);
 
 
 // return a pointer to the node which contains the desired key, or NULL if 404
-slNode * slFind(slNode * slHead, int key);
+slNode * slFind(slNode * slHead, uint32_t key);
 
 /*
 Remove node whose value matches key
 return 0 if successful
 return -1 if 404
 */
-char slRemove(slNode * slHead, int key);
+int8_t slRemove(slNode * slHead, uint32_t key);
+
+// Helper functions:
+
+slNode * findPredecessor(slNode * topPredecessor, uint8_t lv, uint32_t value);
 
 uint8_t flipcoins();
 

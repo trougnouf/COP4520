@@ -6,14 +6,17 @@ Change these values to generate a different test case.
 */
 
 // Used elsewhere
-#define NUMTHREADS 4		// used in handler.c
+#define NUMTHREADS 8		// used in handler.c
 #define NUMTASKS 500000*NUMTHREADS	// used in handler.c and testcase1.c
 
+// Key values
+#define MINKEY 0
+#define MAXKEY 65536
 
 // Used in test case
 #define PERCENTINSERT 70
-#define PERCENTFIND 10
-#define PERCENTREMOVE 20
+#define PERCENTFIND 30
+#define PERCENTREMOVE 0
 
 #define VERBOSE 0
 // debugging

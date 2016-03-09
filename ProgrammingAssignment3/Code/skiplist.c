@@ -1,4 +1,5 @@
 #include "skiplist.h"
+#include "testcase1.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,24 +8,28 @@
 
 
 /*
-initialize skiplist with tail=NULL
+initialize skiplist with tail as a node
 */
 slNode * slInit()
 {
 	slNode * slHead = malloc( sizeof(slNode));
 	slHead->next = malloc(sizeof(slNode*)*slLEVELS );
-	for(uint8_t i=0; i<slLEVELS; i++)	slHead->next[i] = NULL;
+	slNode * slTail = malloc( sizeof(slNode));
+	for(uint8_t i=0; i<slLEVELS; i++)	slHead->next[i] = slTail;
+	slTail->previous = slHead;
+	slHead->key = MINKEY;
+	slTail->key = MAXKEY;
 	return slHead;
 }
 
 // return a pointer to the node which contains the desired key, or NULL if 404
-slNode * slFind(slNode * slHead, int key)
+slNode * slFind(slNode * slHead, uint32_t key)
 {
 	slNode * curNode = slHead;
 	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
-		if(!curNode->next[lv] || curNode->next[lv]->key > key)
+		if(!(curNode->next[lv]->key==MAXKEY) || curNode->next[lv]->key > key)
 		{
 			if(lv)
 			{
@@ -44,7 +49,7 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-char slInsert(slNode * slHead, int newKey)
+int8_t slInsert(slNode * slHead, uint32_t newKey)
 {
 	// Step 1: Find bottom node to insert on the right of
 	slNode * curNode[slLEVELS];
@@ -52,7 +57,7 @@ char slInsert(slNode * slHead, int newKey)
 	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
-		if(!curNode[lv]->next[lv] || curNode[lv]->next[lv]->key > newKey)
+		if(!(curNode[lv]->next[lv]->key==MAXKEY) || curNode[lv]->next[lv]->key > newKey)
 		{
 			if(lv)
 			{
@@ -73,6 +78,9 @@ char slInsert(slNode * slHead, int newKey)
 	newNode->key = newKey;
 	for(lv=0; lv < numLv; lv++)
 	{
+		//check stop flag:
+		if(curNode[lv]->next[lv]->stopflag)
+		curNode[lv]->next[lv] = findPredecessor(curNode[lv-1], lv, newKey);
 		// Using Harris' solution: 
 		// make newnode's next pointer point to curnode's next node
 		slNode * tmpnextnode = curNode[lv]->next[lv];
@@ -96,15 +104,15 @@ return 1 if removed from top level
 return 0 if successful
 return -1 if 404
 */
-char slRemove(slNode * slHead, int key)
+int8_t slRemove(slNode * slHead, uint32_t key)
 {
-	char removedFromTop;
+	int8_t removedFromTop;
 	slNode * curNode = slHead;
 	slNode * target;
 	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
-		if(!curNode->next[lv] || curNode->next[lv]->key > key)
+		if(!(curNode->next[lv]->key==MAXKEY)|| curNode->next[lv]->key > key)
 		{
 			if(lv)
 			{
@@ -117,7 +125,7 @@ char slRemove(slNode * slHead, int key)
 		{
 			if(lv == slLEVELS-1)	removedFromTop = 1;
 			target = curNode->next[lv];
-			target->removing = 1;
+			target->stopflag = 1;
 			curNode->next[lv] = target->next[lv];
 			if(lv)
 			{
@@ -134,18 +142,29 @@ char slRemove(slNode * slHead, int key)
 	}
 }
 
+slNode * findPredecessor(slNode * topPredecessor, uint8_t lv, uint32_t value)
+{
+	slNode * predecessor = topPredecessor;
+	slNode * tmpNode = predecessor;
+	while(tmpNode->next[lv]->key < value)
+	{
+		tmpNode = tmpNode->next[lv];
+		if(!(tmpNode->stopflag))	predecessor = tmpNode;
+	}
+	return predecessor;
+}
+
 uint8_t flipcoins()
 {
-	int coin = rand();
-	int shift = 1;
+	int32_t coin = rand();
+	int32_t shift = 1;
 	uint8_t result = 0;
-	for(uint8_t i=0; i<32; i++)
+	for(uint8_t i=0; i<slLEVELS-1; i++)
 	{
 		if(coin&shift)	result++;
 		else		break;
 		shift<<=1;
 	}
-	
 	return (result>=slLEVELS)?slLEVELS:result+1;
 }
 

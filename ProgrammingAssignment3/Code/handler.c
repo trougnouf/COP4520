@@ -23,8 +23,8 @@ void* thread_dsHandler(void* args)
 	#endif
 	pthreadData * sharedData = (pthreadData *)args;
 	Task * todolist = sharedData->todolist;
-	char retStat;
-	int tsk;	// counter
+	int8_t retStat;
+	atomic_uint tsk;	// counter
 	for(;;)
 	{
 
@@ -95,7 +95,7 @@ int main()
 {
 	// load test case
 	Task * todolist = loadTestCase();
-	atomic_int curTaskNum = 0;
+	atomic_uint curTaskNum = 0;
 	
 	// start timer
 	struct timeval begTime;

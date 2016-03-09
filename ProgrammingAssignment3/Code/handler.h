@@ -10,7 +10,7 @@ typedef enum State {FIND, INSERT, REMOVE, TERM} State;
 typedef struct
 {
 	State task;
-	int inData;
+	uint32_t inData;
 } Task;
 
 // Thread IO
@@ -18,7 +18,7 @@ typedef struct
 {
 	// int ioData;		// currently unnecessary
 	// slNode * resultNode;	// currently unnecessary
-	atomic_int * tsknum;
+	atomic_uint * tsknum;
 	Task * todolist;
 	slNode * slHead;
 } pthreadData;

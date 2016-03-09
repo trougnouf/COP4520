@@ -1,3 +1,36 @@
+marked bit stored with next pointer
+	what for?
+
+back pointer (for recovery)
+	top only or everywhere?
+
+stop flag (set to 1 when delete begins to stop insert)
+	each insertion (up) is conditioned on that flag
+
+
+insert:
+
+go down finding each predecessor,
+go back up inserting after each predecessor if stop flag is not set
+if stop flag is set, call find local predecessor w/ predecessor as node
+
+
+find local predecessor(node, level, value)
+predecessor = node 
+tmpnode = predecessor
+while(tmpnode->next is smaller)
+	tmpnode next
+	if tmpnode doesnt have a stop flag then predecessor = tmpnode
+return predecessor
+yay!!!
+	
+if next is smaller
+ and no stop flag:	predecessor = next
+
+
+
+
+
 https://en.wikipedia.org/wiki/Non-blocking_linked_list
 
 each node has a marked bit (supposedly stored w/ the pointer)
@@ -16,3 +49,8 @@ funct listSearch(x,start) returns left.key<k<=right.key (for cleanup, unlinks)
 
 Each insertion is conditioned on the
 stop flag of the root remaining unset.
+
+
+
+bit stealing:
+http://stackoverflow.com/questions/19389243/stealing-bits-from-a-pointers
