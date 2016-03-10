@@ -8,6 +8,7 @@ stop flag (set to 1 when delete begins to stop insert)
 	each insertion (up) is conditioned on that flag
 
 
+
 insert:
 
 go down finding each predecessor,
@@ -26,7 +27,6 @@ yay!!!
 	
 if next is smaller
  and no stop flag:	predecessor = next
-
 
 
 
@@ -54,3 +54,60 @@ stop flag of the root remaining unset.
 
 bit stealing:
 http://stackoverflow.com/questions/19389243/stealing-bits-from-a-pointers
+
+
+
+
+notes:
+
+It was determined in our locking skiptrie that the skiplist operates faster with a higher number of levels, as opposed to the author's suggested log log u levels (where u is the size of the key space, in this case 2^30). We believed it may have been caused by a bug in the "flipcoins" function which allowed the higher levels to be accessed more frequently.
+We also lowered the key space from 2^30 in Assignment 2 to 2^16. This creates many collisions and makes it easier to test the data structure.
+We benchmarked the updated code and determined that these two changes had virtually no performance impact, but the code currently runs faster with fewer levels regardless of the level usage (which was decreased from 16 to 4). This benchmark was performed without the remove function, which does not yet properly handle collisions as of 2016-03-09 22:53.
+
+
+4 threads 500000/thr 50ins 50find 0-65536 keys 4 levels i<slLevels-1
+	0.497518s
+	0.472353s
+	0.487980s
+	0.434786s
+	0.470747s
+	0.469414s
+
+i<32
+	0.463904s
+	0.449626s
+	0.459079s
+	0.480962s
+	0.465666s
+	0.469147s
+
+
+0-2^30 keys (1073741824 max): 
+i<32
+	0.477586s
+	0.496773s
+	0.471164s
+i<slLEVELS-1
+	0.445102s
+	0.487845s
+	0.454026s
+
+0-2^30 keys 16-levels
+i<slLEVELS-1
+	0.549201s
+	0.540856s
+	0.522749s
+i<32
+	0.556159s
+	0.536760s
+	0.524847s
+
+0-2^16 keys 
+	0.553510s
+	0.528630s
+	0.537294s
+i<slLEVELS-1
+	0.534785s
+	0.526325s
+	0.523537s
+

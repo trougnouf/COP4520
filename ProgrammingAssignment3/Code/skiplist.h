@@ -13,7 +13,7 @@
 let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
-#define slLEVELS 16	//TODO dynamic levels
+#define slLEVELS 4	//TODO dynamic levels
 
 typedef struct slNode_ {
 	uint32_t key;
@@ -51,7 +51,11 @@ int8_t slRemove(slNode * slHead, uint32_t key);
 
 // Helper functions:
 
-slNode * findPredecessor(slNode * topPredecessor, uint8_t lv, uint32_t value);
+/*
+	We use this function to find the direct predecessor of any given node 
+	when we a next node is marked for deletion
+*/
+slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value);
 
 uint8_t flipcoins();
 

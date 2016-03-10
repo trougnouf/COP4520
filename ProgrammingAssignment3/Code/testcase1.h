@@ -14,9 +14,9 @@ Change these values to generate a different test case.
 #define MAXKEY 65536
 
 // Used in test case
-#define PERCENTINSERT 70
-#define PERCENTFIND 30
-#define PERCENTREMOVE 0
+#define PERCENTINSERT 33
+#define PERCENTFIND 33
+#define PERCENTREMOVE 34
 
 #define VERBOSE 0
 // debugging

@@ -80,14 +80,16 @@ int8_t slInsert(slNode * slHead, uint32_t newKey)
 	{
 		//check stop flag:
 		if(curNode[lv]->next[lv]->stopflag)
-		curNode[lv]->next[lv] = findPredecessor(curNode[lv-1], lv, newKey);
+			curNode[lv]->next[lv] = findPredecessor(curNode, lv,
+			 newKey);
 		// Using Harris' solution: 
 		// make newnode's next pointer point to curnode's next node
 		slNode * tmpnextnode = curNode[lv]->next[lv];
 		newNode->next[lv] = tmpnextnode;
 		// make curnode's next pointer point to new node iff curnode
 		// hasn't changed, else start over.
-		if(!atomic_compare_exchange_strong(&curNode[lv]->next[lv], &tmpnextnode, newNode))
+		if(!atomic_compare_exchange_strong(&curNode[lv]->next[lv],
+		  &tmpnextnode, newNode))
 			lv--;	// start over	
 	}
 	if(numLv == slLEVELS)
@@ -142,18 +144,52 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 	}
 }
 
-slNode * findPredecessor(slNode * topPredecessor, uint8_t lv, uint32_t value)
+// Return a node's predecessor on any given level
+slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value)
 {
-	slNode * predecessor = topPredecessor;
+	// Find first predecessor which isn't set for deletion
+	uint8_t curLv = lv;
+	slNode * predecessor;
+	do {
+		if(curLv)
+		{
+			curLv--;
+			predecessor = predecessors[curLv];
+		}
+		// every top node has a predecessor
+		else	predecessor = predecessor->previous;
+	} while(!predecessor || predecessor->stopflag);
+	
+	// Go right if this is still a predecessor, go up if stop flag detected.
 	slNode * tmpNode = predecessor;
 	while(tmpNode->next[lv]->key < value)
 	{
 		tmpNode = tmpNode->next[lv];
-		if(!(tmpNode->stopflag))	predecessor = tmpNode;
+		if(tmpNode && !(tmpNode->stopflag))	predecessor = tmpNode;
+			
+		else // tmpNode is being deleted
+		{
+			// try to get tmpNode's node if tmpNode still exists
+			slNode * markedNode = tmpNode->next[lv];	//potential segfault if dne
+			if(markedNode && !markedNode->stopflag)
+			{
+				if(markedNode->key > value)	break;
+				else
+				{
+					tmpNode = markedNode;
+					predecessor = markedNode;
+					continue;
+				}
+			}
+			
+			// otherwise set tmpNode back to last working predecessor
+			else	tmpNode= predecessor; 
+		}
 	}
 	return predecessor;
 }
 
+// Wouldn't it be nice if this was commented? }:‑)
 uint8_t flipcoins()
 {
 	int32_t coin = rand();
