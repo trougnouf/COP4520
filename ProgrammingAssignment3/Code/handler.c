@@ -14,6 +14,8 @@ TODO: Add x-fast trie functions to switch() statements
 #include "handler.h"
 #include "testcase1.h"
 #include "skiplist.h"
+#include "uthash.h"
+#include "xtrie.h"
 
 
 void* thread_dsHandler(void* args)
@@ -101,9 +103,13 @@ int main()
 	struct timeval begTime;
 	gettimeofday(&begTime, NULL);
 
-	// init Data Structures
+	// init Data Structures		
+
 	slNode * slHead = slInit();
-	
+	x_node *root = initialize_trie();
+	x_node *LSS[17];
+	initialize_hash(LSS, root);
+
 	// init Threads
 	pthread_t threads[NUMTHREADS];
 	pthreadData threadData[NUMTHREADS];

@@ -1,223 +1,213 @@
-#include "uthash.h"
+#include "xtrie.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
-#define XSIZE 31
-#define MID 15
-#define BASE 0
-
-/**struct for each node in x-trie.
-    Add back pointer to point to parent node to help predecessor/successor function??**/
-typedef struct x_trie_node {
-    int key;
-    struct x_trie_node *left;
-    struct x_trie_node *right;
-    struct x_trie_node *back;
-    UT_hash_handle hh[XSIZE];
-} x_node;
+//#define XSIZE 16
+//#define BASE 0
+//#define RIGHT 1
 
 /**initialize xnode trie**/
 x_node *initialize_trie(){
 
     x_node *root = NULL;
     root = (x_node*)malloc(sizeof(x_node));
-    root->key = 0;
-    root->left = NULL;
-    root->right = NULL;
-    root->back = NULL;
+    root->key = BASE;
+    root->pointers[BASE] = NULL;
+	root->pointers[RIGHT] = NULL;
+    root->top = NULL;
     return root;
 
 }
 
+void initialize_hash(x_node **LSS, x_node *root){
+
+	int i;
+	for(i=BASE; i<=XSIZE; i++){
+		LSS[i] = NULL;
+	}
+
+	HASH_ADD(hh[XSIZE], LSS[XSIZE], key, sizeof(uint32_t), root);
+}
+
 /**Find if key value is in the hash table at a specific level in the level search structure (LSS).
 Returns null if not found.*/
-x_node *find_key(int key, int level, x_node **LSS){
+x_node *find_key(uint32_t key, int level, x_node **LSS){
 
     x_node *tmp = NULL;
-    HASH_FIND(hh[level], LSS[level], &key, sizeof(int),tmp);
+    HASH_FIND(hh[level], LSS[level], &key, sizeof(uint32_t),tmp);
 
     return tmp;
 
 }
 
 /**Find lowest ancestor for a key value**/
-void find_ancestor(int key, int level, x_node **LSS){
+x_node *find_ancestor(uint32_t key, x_node **LSS){
 
     x_node *ancestor = NULL;
     x_node *canidate = NULL;
 
-    int min = 0;
+    int min = BASE;
+	int max = XSIZE;
+	int size = XSIZE/2;
+	int direction = BASE;
 
     /**loop over possible levels until bottom most possible level is reached**/
-    while(level>min){
+    while(max>=min){
+		
+		uint32_t prefix = key>>(XSIZE-size);
 
-        /**get prefix of key for a level, then see if the prefix is in the hashtable**/
-        int lvl_key = key>>level;
-        canidate = find_key(lvl_key, level, LSS);
+		canidate = find_key(prefix, XSIZE-size, LSS);
 
-        /**if prefix is in table, change ancestor to node found with that prefix.
-        Check lower levels for longer possible prefixes **/
-        if(canidate != NULL){
-            ancestor = canidate;
-            level = level/2;
-        }
-        /**prefix not found.  Lowest common ancestor must be higher up in table.  Change the minimum possible level
-            to the current level and proceed higher in the trie**/
-        else{
-            printf("check higher. current level: %d\n", level);
-            min = level;
-            level = level + (level/2);
+		if(canidate != NULL){
+			
+			ancestor = canidate;
+			direction = prefix&1;
+			min = size + RIGHT;
+		}
+		else{
+			max = size - RIGHT;
+		}
 
-            /**If the highest possible level is reached, exit the loop**/
-            if(level >= XSIZE){
-                level = min;
-            }
-        }
-
+		size = (max+min)/2;
     }
 
-    /**ancestor now holds lowest common ancestor**/
-    if(ancestor != NULL){
+	if(ancestor->key == key){
+		return ancestor;
+	}
+	else{
+		
+		x_node *predecessor = ancestor->pointers[!direction];
+		return predecessor;
+	}
 
-    }
-    /**no lowest common ancestor ??**/
-    else{
+}
 
-    }
+/**
+	find lowest ancestor of key.  Since value could actually be successor or a marked key, traverse to find true predecessor
+	TODO : add traversal over ??back?? pointer if predecessor is marked for deletion
+**/
+x_node *find_xFastTriePred(uint32_t key, x_node **LSS){
 
+	x_node *tmp = find_ancestor(key,LSS);
+	
+	while(tmp->key > key){
+		
+		tmp = tmp->pointers[BASE];
+	}
 }
 
 /**Insert key value into x-trie structure and then add hash to level search structure if needed.
     Each LSS[level] has a matching hashtable called hh[level]
 
-    TODO: add predecessor/successor check??
+	TODO: have function check for predecessor before adding extra nodes?
 **/
-void insert_x_trie(int key, int level, x_node **LSS, x_node *leaf){
+void insert_x_trie(uint32_t key, x_node **LSS, slNode *topNode){
 
-    /**get bit to determine direction for placement in x-trie (0 = left, 1 = right)**/
-    int mask = 1<<level-1;
-    int combine = key&mask;
-    int direction = combine>>level-1;
+	x_node *leaf;
+	x_node *tmp;
 
-    /**find prefix value for key at current level in LSS**/
-    int tmpKey = key>>level-1;
+    //check if key is already in hashtable
+    tmp = find_key(key, BASE, LSS);
 
+	if(tmp!=NULL){
+		return;
+	}
 
-    x_node *tmp = NULL;
+	leaf = (x_node*)malloc(sizeof(x_node));
+	leaf->key = key;
+	leaf->pointers[BASE] = NULL;
+	leaf->pointers[RIGHT] = NULL;
+	leaf->top = NULL; //set equal to skiplist node
+	tmp = leaf;
+	uint32_t tmpKey = key;
 
-    /**return once bottom level is reached.  Indicating key has been completely inserted.
-    Possibly use this check to release hashtable lock????**/
-    if(level == BASE){
-        return;
-    }
+	HASH_ADD(hh[BASE], LSS[BASE], key, sizeof(uint32_t), leaf);
 
-    else{
+	int keySize;
+	for(keySize = XSIZE - RIGHT; keySize>= BASE; keySize--){
+		
+		uint32_t prefix = tmpKey>>RIGHT;
+		int direction = tmpKey&RIGHT;
 
-        /**if next node is in left direction and a node for that prefix does not exist,
-            create the x-node and add it to the LSS hashtable for that level.  Set the current node's
-            left pointer to the newly created node.
-        **/
-        if(direction == 0 && leaf->left==NULL){
+		x_node *preNode = find_key(prefix, XSIZE-keySize, LSS);
+		
+		if(preNode == NULL){
+			
+			preNode = (x_node*)malloc(sizeof(x_node));
+			preNode->key = prefix;
+			preNode->pointers[direction] = leaf;
+			preNode->pointers[!direction] = leaf;
+			preNode->top = NULL;
+			HASH_ADD(hh[XSIZE-keySize], LSS[XSIZE-keySize], key, sizeof(uint32_t), preNode);
+		}
 
-            tmp = (x_node*)malloc(sizeof(x_node));
-            tmp-> key = tmpKey;
-            tmp->left = NULL;
-            tmp->right = NULL;
-            tmp->back = leaf;
-            leaf->left = tmp;
+		if(preNode->pointers[direction]!=NULL && preNode->pointers[direction]!=leaf && leaf->pointers[!direction] == NULL){
+			
+			leaf->pointers[!direction] = preNode->pointers[direction];
+			leaf->pointers[direction] = leaf->pointers[!direction]->pointers[direction];
+			if(leaf->pointers[direction]!= NULL){
+				
+				leaf->pointers[direction]->pointers[!direction] = leaf;
+			}
+		}
 
-            HASH_ADD(hh[level-1],LSS[level-1], key, sizeof(int),tmp);
+		if(preNode->pointers[BASE] == NULL || preNode->pointers[BASE]->key > leaf->key){
+			
+			preNode->pointers[BASE] == leaf;
+		}
 
-            insert_x_trie(key, level-1, LSS, tmp);
-        }
+		if(preNode->pointers[RIGHT] == NULL || preNode->pointers[RIGHT]->key < leaf->key){
+			
+			preNode->pointers[RIGHT] = leaf;
+		}
 
-        /**same as above check but in right (1) direction**/
-        else if(direction == 1 && leaf->right==NULL){
+		preNode->pointers[direction] = tmp;
+		tmpKey = prefix;
+		tmp = preNode;
 
-            tmp = (x_node*)malloc(sizeof(x_node));
-            tmp->key = tmpKey;
-            tmp->left = NULL;
-            tmp->right = NULL;
-            tmp->back = leaf;
-            leaf->right = tmp;
-
-            HASH_ADD(hh[level-1],LSS[level-1], key, sizeof(int),tmp);
-            insert_x_trie(key, level-1, LSS, tmp);
-        }
-
-        /**A prefix node already exists in the direction we are taking**/
-        else{
-            if(direction == 0){
-                insert_x_trie(key, level-1, LSS, leaf->left);
-            }
-            else{
-                insert_x_trie(key, level-1, LSS, leaf->right);
-            }
-
-        }
-
-
-    }
+		
+	}
 
 }
 
-void delete_x_trie(int key, int level, x_node **LSS, x_node *leaf){
+void delete_x_trie(uint32_t key, x_node **LSS, x_node *leaf){
+	
 
-    int mask = 1<<level-1;
-    int combine = key & mask;
-    int direction = combine>>level-1;
+	HASH_DELETE(hh[BASE], LSS[BASE], leaf);
 
-    x_node *tmp = leaf->back;
+	x_node *pred = leaf->pointers[BASE];
+	x_node *succ = leaf->pointers[RIGHT];
+	pred->pointers[RIGHT] = succ;
+	succ->pointers[BASE] = pred;
 
-    /**  If in LSS[0]
-    TODO: at root level, connect pred(prev?) and succ before deletion**/
-    if(level == 0){
+	//leaf->pointers[BASE] = NULL;
+	//leaf->pointers[RIGHT] = NULL;
+	
+	x_node *tmp = leaf;
+	uint32_t tmpKey = key;
+	int keySize;
 
-        HASH_DELETE(hh[level], LSS[level], leaf);
-        free(leaf);
-        delete_x_trie(key, level+1, LSS, tmp);
-    }
+	for(keySize = BASE; keySize<=(XSIZE-RIGHT); keySize++){
 
-    /**exit if root is reached**/
-    else if(level == XSIZE-1){
-        return;
-    }
+		uint32_t prefix = tmpKey>>(XSIZE-keySize);
+		int direction = (tmpKey>>(XSIZE-keySize+RIGHT)&RIGHT);
 
-    else{
+		x_node *preNode = find_key(prefix, XSIZE-keySize, LSS);
 
-        if(direction == 0){
+		if(preNode->pointers[direction] == leaf){
 
-            leaf->left = NULL;
+			preNode->pointers[direction] = NULL;
+		}
+		
+		if(preNode->pointers[direction] == NULL && preNode->pointers[!direction] ==NULL){
+			
+			HASH_DELETE(hh[XSIZE-keySize], LSS[XSIZE-keySize], preNode);
+			//free(preNode);
+		}
+	}
 
-            /**if prefix has another child, do not delete prefix**/
-            if(leaf->right != NULL){
-
-                return;
-            }
-            else{
-
-                tmp = leaf->back;
-                HASH_DELETE(hh[level],LSS[level], leaf);
-                free(leaf);
-                delete_x_trie(key,level+1, LSS, tmp);
-            }
-        }
-        else{
-
-            leaf->right = NULL;
-
-            if(leaf->left != NULL){
-                return;
-            }
-            else{
-                tmp = leaf->back;
-                HASH_DELETE(hh[level],LSS[level],leaf);
-                free(leaf);
-                delete_x_trie(key,level+1,LSS,tmp);
-            }
-        }
-    }
-
+	//free(leaf);
 }
 
 /**

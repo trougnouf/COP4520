@@ -2,6 +2,7 @@
 #define HANDLER_H
 
 #include "skiplist.h"
+#include "xtrie.h"
 #include <stdatomic.h>
 
 typedef enum State {FIND, INSERT, REMOVE, TERM} State;
