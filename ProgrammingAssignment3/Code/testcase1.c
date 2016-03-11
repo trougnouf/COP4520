@@ -18,8 +18,7 @@ Task * loadTestCase()
 		else if(randNum <= PERCENTINSERT+PERCENTFIND)	randTask=FIND;
 		else						randTask=REMOVE;
 		todolist[i].task = randTask;
-		todolist[i].inData = (rand() % (MAXKEY-2))+1;
-		
+		todolist[i].inData = (rand() % (MAXKEY-1))+1;
 	}
 	for(;i<NUMTASKS+NUMTHREADS; i++)	todolist[i].task = TERM;
 	return todolist;

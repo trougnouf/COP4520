@@ -147,6 +147,7 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 // Return a node's predecessor on any given level
 slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value)
 {
+	printf("Finding predecessor");
 	// Find first predecessor which isn't set for deletion
 	uint8_t curLv = lv;
 	slNode * predecessor;
