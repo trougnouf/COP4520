@@ -20,7 +20,7 @@ Change these values to generate a different test case.
 #define PERCENTREMOVE 0
 
 #define DBG_PRINTSL 1
-#define VERBOSE 0
+#define VERBOSE 3
 // debugging
 /*	VERBOSE:
 		0: Result only

@@ -1,3 +1,41 @@
+strategies:
+do it all in one traversal? dynamic programming
+less likely that things have changed by the time bottom is reached.
+1) determine # of levels
+2) create the new node
+3) find next bigger key & mark it with cas
+
+(while)
+save next key.
+if next key is bigger:
+	flag test and set next (if flagged then backtrack:goto last flagged?)
+	check delete flag (if deleting then continue. otherwise use cas? save self)
+	unflag next
+
+when going down, use last next. unflag if next is bigger
+	
+
+slNode * lastFlagged;
+slNode * curNode
+slNode * tmpNode
+uint8_t lv;
+for each level:
+for(;;):
+	tmpNode = curNode->next[lv]
+	if(tmpNode->key > curNode->key)
+		atomic_fetch_or(node->flag, 2)
+		
+	atomic or nextpointer,marked
+
+if next is bigger: atomicor next (set flag), else continue
+atomicor deleteflag (set no deletion. continue if being deleted)
+
+
+atomic compare larger?
+
+
+
+
 marked bit stored with next pointer
 	what for?
 
