@@ -3,6 +3,7 @@
 
 
 #include "skiplist.h"
+#include "testcase1.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,8 +14,9 @@
 let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
+#ifndef slLEVELS
 #define slLEVELS 4	//TODO dynamic levels
-
+#endif
 typedef struct slNode_ {
 	uint32_t key;
 	struct slNode_ ** next;
@@ -36,7 +38,7 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-int8_t slInsert(slNode * slHead, uint32_t newKey);
+slNode * slInsert(slNode * slHead, uint32_t newKey);
 
 
 // return a pointer to the node which contains the desired key, or NULL if 404

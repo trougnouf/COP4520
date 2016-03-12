@@ -45,19 +45,22 @@ slNode * slFind(slNode * slHead, uint32_t key)
 }
 
 /* Insert key into skiplist.
-return -1: newKey exists
-return 0:  sucess, nothing left to do
-return 1:  sucess, top-level reached (x-fast trie required)
+Return pointer to new node if top level reached, NULL otherwise.
 */
-int8_t slInsert(slNode * slHead, uint32_t newKey)
+slNode * slInsert(slNode * slHead, uint32_t newKey)
 {
-	// Step 1: Find bottom node to insert on the right of
+	// Verify that new key is valid
+	if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+	
+	// Step 1:	Find bottom node to insert on the right of, keeping
+	//		track of every node on the way down
 	slNode * curNode[slLEVELS];
-	curNode[slLEVELS-1] = slHead;
 	uint8_t lv = slLEVELS-1;
+	curNode[lv] = slHead;
 	for(;;)
 	{
-		if(!(curNode[lv]->next[lv]->key==MAXKEY) || curNode[lv]->next[lv]->key > newKey)
+		// If next node is larger: go down. Else: move right.
+		if(curNode[lv]->next[lv]->key > newKey)
 		{
 			if(lv)
 			{
@@ -65,10 +68,10 @@ int8_t slInsert(slNode * slHead, uint32_t newKey)
 				curNode[lv] = curNode[lv+1];
 				continue;
 			}
-			break;	// All the way down
+			break;	// All the way down -> done
 		}
 		if(curNode[lv]->next[lv]->key == newKey)
-			return -1;	// found
+			return NULL;	// Key already exists
 		curNode[lv]= curNode[lv]->next[lv];	// go right
 	}
 	// Step 2: Insert on the right of curNode for each level
@@ -76,7 +79,8 @@ int8_t slInsert(slNode * slHead, uint32_t newKey)
 	slNode * newNode = malloc(sizeof(slNode));
 	newNode->next = malloc(sizeof(slNode*)*(numLv));
 	newNode->key = newKey;
-	for(lv=0; lv < numLv; lv++)
+	slNode * tmpnextnode;
+	for(lv=0; lv < numLv; lv++)	// Insert from the bottom up
 	{
 		//check stop flag:
 		if(curNode[lv]->next[lv]->stopflag)
@@ -84,7 +88,7 @@ int8_t slInsert(slNode * slHead, uint32_t newKey)
 			 newKey);
 		// Using Harris' solution: 
 		// make newnode's next pointer point to curnode's next node
-		slNode * tmpnextnode = curNode[lv]->next[lv];
+		tmpnextnode = curNode[lv]->next[lv];
 		newNode->next[lv] = tmpnextnode;
 		// make curnode's next pointer point to new node iff curnode
 		// hasn't changed, else start over.
@@ -95,9 +99,9 @@ int8_t slInsert(slNode * slHead, uint32_t newKey)
 	if(numLv == slLEVELS)
 	{
 		newNode->previous = curNode[lv-1];
-		return 1;
+		return NULL;
 	}
-	return 0;
+	return newNode;
 }
 
 /*

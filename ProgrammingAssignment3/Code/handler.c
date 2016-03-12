@@ -27,6 +27,7 @@ void* thread_dsHandler(void* args)
 	Task * todolist = sharedData->todolist;
 	int8_t retStat;
 	atomic_uint tsk;	// counter
+	slNode * tmpSLNode;
 	for(;;)
 	{
 
@@ -46,30 +47,42 @@ void* thread_dsHandler(void* args)
 		switch(todolist[tsk].task)
 		{
 			// define thread behavior here (and/or call functions)
+			
 			case FIND:
-				// 1=found, 0=404
+			/*
+				Find closest node in the xtrie, pass it on to
+				the skiplist.
+			*/
+				// TODO tmpSLNode = xfind function()
+				// then replace (slFind(sharedData->slHead, w/(slFind(tmpSLNode,)
 				retStat =	(slFind(sharedData->slHead,
 						todolist[tsk].inData)!=NULL);
 				#if VERBOSE == 3
 				printf(	"Found %d in skiplist: %d\n",
 					todolist[tsk].inData, retStat);
 				#endif
-				//TODO xfind()
 				break;
 			case INSERT:
-				// -1=already exists, 0=success(done), 1=sucess
-				//     (top-level reached, x-fast trie required)
-				retStat =	slInsert(sharedData->slHead,
+			/*
+				slInsert() returns the new node if it reached
+				the top, in which case xInsert() is called
+			*/
+				tmpSLNode = slInsert(sharedData->slHead,
 						todolist[tsk].inData);
 				#if VERBOSE == 3
-				printf(	"Added %d to skiplist: %d\n",
-					todolist[tsk].inData, retStat);
+				printf(	"Added %d to skiplist: %u\n",
+					todolist[tsk].inData, tmpSLNode!=NULL);
 				#endif
-				if(retStat == 1)
+				if(tmpSLNode)
 					;//TODO call xInsert()
-				//curTask = IDLE;
 				break;
 			case REMOVE:
+			/*
+				Remove from xtrie, return closest skiplist node,
+				remove from skiplist
+			*/
+				// TODO tmpSLNode = xremove function()
+				// then replace (slRemove(sharedData->slHead, w/(slRemove(tmpSLNode,)
 				// 0=success, -1=404
 				retStat =	slRemove(sharedData->slHead,
 						todolist[tsk].inData);
@@ -78,7 +91,6 @@ void* thread_dsHandler(void* args)
 				printf(	"Removed %d from skiplist: %d\n",
 					todolist[tsk].inData, retStat);
 				#endif
-				//todolist[tsk].inData = IDLE;
 				break;
 			case TERM:
 				#if VERBOSE == 3
@@ -125,11 +137,26 @@ int main()
 	// terminate all threads
 	for(uint8_t thr=0; thr<NUMTHREADS; thr++)
 	{
-		//while(threadData[thr].curState != IDLE);
-		//threadData[thr].curState = TERM;
 		pthread_join(threads[thr], NULL);
 	}
 	printResults(&begTime);
+	
+	#if DBG_PRINTSL
+	// Print the skiplist
+	slNode * tmpSLNode;
+	printf("\n");
+	for(int8_t lv = slLEVELS-1; lv >= 0; lv--)
+	{
+		printf("Level %u: ", lv);
+		tmpSLNode = slHead;
+		while(tmpSLNode->key != MAXKEY)
+		{
+			printf("%u, ", tmpSLNode->key);
+			tmpSLNode = tmpSLNode->next[lv];
+		}
+		printf("%u\n", tmpSLNode->key);
+	}
+	#endif
 }
 
 void printResults(struct timeval * begTime)
