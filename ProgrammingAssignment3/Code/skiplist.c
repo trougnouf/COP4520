@@ -52,6 +52,8 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	// Verify that new key is valid
 	if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
 	
+	
+	
 	// Step 1:	Find bottom node to insert on the right of, keeping
 	//		track of every node on the way down
 	slNode * curNode[slLEVELS];

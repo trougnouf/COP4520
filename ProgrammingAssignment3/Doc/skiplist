@@ -5,6 +5,49 @@ less likely that things have changed by the time bottom is reached.
 2) create the new node
 3) find next bigger key & mark it with cas
 
+...) if #levels = max, return pointer to node
+
+[0420 am]
+for each level starting on top, infinite loop:
+save cur->next[lv] (as nextnode?)
+if nextnode is still smaller, then make it currentnode and continue
+if nextnode = new then delete self on all levels and return null
+mark cur->next[lv] pointer w/ boolean flag (atomic)
+	if successfully marked then do the things, otherwise continue
+
+the things include:
+	check that cur->next[lv] = nextnode (otherwise unset boolean and continue)
+	set newnode->next[lv] = nextnode
+	set curnode->next[lv] = newnode
+	break;
+
+impl:
+
+	
+// bottom to top
+slRemoveSelf(node, prev, minlv, maxlv)
+{
+	slNode * previous = prev;
+	uint8_t curLv = minlv;
+	for each level:
+	while(previous->next[lv]->key < node->key)
+	{
+		previous = previous->next[lv] if successfully set boolean flag;
+	}
+	flag previous->next[lv] (if fail then recursively start over and break)
+	if prev->next != node then unflag  and recursively start over
+		
+	prev->next[lv] = node->next[lv]
+	
+	
+	free(node->next), free(node)
+	
+	
+// todo: add deletion-specific flag
+}
+[/]
+
+
 (while)
 save next key.
 if next key is bigger:
