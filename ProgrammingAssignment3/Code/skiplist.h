@@ -65,4 +65,6 @@ uint8_t flipcoins();
 
 slNode * getPtr(uintptr_t p);
 
+slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t oldLv);
+
 #endif

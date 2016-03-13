@@ -69,6 +69,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	{	
 		nextNode = getPtr(curNode->next[lv]);
 		// Move right until successor is found
+		//if(!nextNode)	continue;
 		if(nextNode->key < newKey)
 		{
 			curNode = nextNode; // do some checks? del
@@ -111,29 +112,40 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	slNode * newNode = malloc(sizeof(slNode));
 	newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
 	newNode->key = newKey;
-	uint8_t merging = 0;
-	slNode * duplicateNode;
 	for(;;)
 	{
 		nextNode = getPtr(curNode->next[lv]);
 		// Move right until successor is found
-		if(nextNode->key < newKey)
+		//if(!nextNode)	continue;
+		if(nextNode->key < newKey) // remove nextnode
 		{
+			//if(nextNode->stopflag)	continue; // remove
 			curNode = nextNode; // do some checks? del
 			continue;
 		}
 		// Merge nodes if exists on lower level
 		if(nextNode->key == newKey)
 		{
+			//printf("merging\n");
+			return slMerge(nextNode, newNode, curNode, lv);
+			/*
+			slNode * duplicateNode = nextNode;
+			duplicateNode->stopflag = 1;
 			for(;;)
-			{break;
+			{
+				if(getPtr(curNode->next[lv]) != duplicateNode)
+				{
+					curNode = getPtr(curNode->next[lv]
+				}
 			}
+			
 			if(!merging)
 			{
 				merging = lv;
 				duplicateNode = nextNode;
 				duplicateNode->stopflag = 1;
 			}
+			*/
 			//slMerge(curNode, nextNode, lv, newNode, numLv);
 			//goto endOfInsert;
 		}
@@ -148,6 +160,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 			// Verify that next is still valid
 			if(getPtr(curNode->next[lv]) != nextNode)
 			{
+				printf("Reset flag.\n");
 				// Reset flag
 				curNode->next[lv] ^ 1;
 				continue;
@@ -155,13 +168,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 			// Top? Set previous node.
 			if(lv == slLEVELS-1)	newNode->previous = curNode;
 			// Do the insertion:
-			if(merging) // Point to the next node
-			{
-				//if(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1)
-					//continue;
-				newNode->next[lv] = duplicateNode->next[lv] ;
-			}
-			else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+			newNode->next[lv] = (atomic_uintptr_t)nextNode;
 			curNode->next[lv] = (atomic_uintptr_t)newNode;
 			if(lv)	lv--;
 			else	break;
@@ -169,11 +176,6 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	}
 	
 	endOfInsert:
-	if(merging)
-	{
-		free(duplicateNode->next);
-		free(duplicateNode);
-	}
 	if(numLv == slLEVELS-1)	return newNode;
 	else	return NULL;
 	
@@ -231,7 +233,36 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	*/
 }
 
-
+slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t oldLv)
+{
+	//printf("merging\n");
+	oldNode->stopflag = 1;
+	int8_t lv = oldLv;
+	uint32_t key = newNode->key;
+	for(;;)
+	{
+		if(getPtr(curNode->next[lv])->key < key)
+		{
+			curNode = getPtr(curNode->next[lv]);
+			continue;
+		}
+		if(getPtr(curNode->next[lv])->key != key)
+			printf("slMerge: Undefined behavior.\n");
+		newNode->next[lv] = oldNode->next[lv];
+		curNode->next[lv] = (atomic_uintptr_t)newNode;
+		if(lv)
+		{
+			lv--;
+			continue;
+		}
+		else
+		{
+			free(oldNode->next);
+			free(oldNode);
+			return (oldLv==slLEVELS-1)?newNode:NULL;
+		}
+	}
+}
 
 /*
 Remove node whose value matches key
