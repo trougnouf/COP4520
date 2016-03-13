@@ -6,8 +6,31 @@ less likely that things have changed by the time bottom is reached.
 3) find next bigger key & mark it with cas
 
 ...) if #levels = max, return pointer to node
+[1435] 
+for each level:
+findAndFlagPredecessor
+if successor->key == newKey, merge()
 
-[0420 am]
+
+
+findAndFlagSuccessor()
+
+do i need to flag the predecessor (curnode)?
+
+5   ->    10          -> 15
+  -> 8 ->
+  	      -> 12
+  
+  // check if next = self
+  
+  find curNode
+  if next=self: merge
+  else:
+  flag curNode->next
+  self->next = curNode->next 
+  curNode->next = self
+
+[0420]
 for each level starting on top, infinite loop:
 save cur->next[lv] (as nextnode?)
 if nextnode is still smaller, then make it currentnode and continue
@@ -45,7 +68,39 @@ slRemoveSelf(node, prev, minlv, maxlv)
 	
 // todo: add deletion-specific flag
 }
+
+instead of deletion, allow frequently added keys to grow
+
+if found before insertion, then abort, else merge
+
+slMerge(slNode * newNode, slNode * oldNode, uint8_t oldLv, uint8_t newLv)
+{
+	slNode * predecessor = oldNode->predecessor;
+
+	take oldNode's next pointers (check flag)
+	find predecessor
+	set predecessor next to self (check flag)
+	
+}
+
+find predecessor:
+(forward: curNode, lv)
+
+slFindPredecessor(slNode * curNode, )
+slFindAndFlagLocalPredecessor(slNode * curNode, uint8_t lv)
+{
+	...
+}
+
 [/]
+
+
+
+
+
+
+
+
 
 
 (while)

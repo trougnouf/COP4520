@@ -67,11 +67,15 @@ void* thread_dsHandler(void* args)
 				slInsert() returns the new node if it reached
 				the top, in which case xInsert() is called
 			*/
+				#if VERBOSE == 3
+				printf("Adding %u\t", todolist[tsk].inData);
+				fflush(stdout);
+				#endif
 				tmpSLNode = slInsert(sharedData->slHead,
 						todolist[tsk].inData);
 				#if VERBOSE == 3
 				printf(	"Added %d to skiplist: %u\n",
-					todolist[tsk].inData, tmpSLNode!=NULL);
+					todolist[tsk].inData, tmpSLNode?tmpSLNode->key:0);
 				#endif
 				if(tmpSLNode)
 					;//TODO call xInsert()
@@ -152,7 +156,7 @@ int main()
 		while(tmpSLNode->key != MAXKEY)
 		{
 			printf("%u, ", tmpSLNode->key);
-			tmpSLNode = tmpSLNode->next[lv];
+			tmpSLNode = getPtr(tmpSLNode->next[lv]);
 		}
 		printf("%u\n", tmpSLNode->key);
 	}

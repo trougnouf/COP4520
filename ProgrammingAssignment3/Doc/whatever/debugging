@@ -1,0 +1,363 @@
+16->18 is marked on lv1 and lv0
+
+
+Adding 10	Added 10 to skiplist: 0
+Adding 16	Added 16 to skiplist: 0
+Adding 13	Added 13 to skiplist: 0
+Adding 13	Added 13 to skiplist: 0
+Adding 8	Added 8 to skiplist: 0
+Adding 2	Added 2 to skiplist: 0
+Adding 5	Added 5 to skiplist: 0
+Adding 7	Added 7 to skiplist: 7
+Adding 6	Added 6 to skiplist: 0
+Adding 16	Added 16 to skiplist: 0
+Adding 17	^C
+[trougnouf@d Code]$ gcc -pthread -g handler.c testcase1.c skiplist.c xtrie.c -g && ./a.out            cc -pthread -g handler.c testcase1.c skiplist.c xtrie.c -g && ./a.out            db ./a.out 
+GNU gdb (GDB) 7.10.1
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./a.out...done.
+(gdb) b skiplist.c:58
+Breakpoint 1 at 0x401158: file skiplist.c, line 58.
+(gdb) run
+Starting program: /home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+[New Thread 0x7ffff7449700 (LWP 2289)]
+Adding 16	[Switching to Thread 0x7ffff7449700 (LWP 2289)]
+
+Breakpoint 1, slInsert (slHead=0x608010, newKey=16) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) n
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) n
+Program not restarted.
+(gdb) c
+Continuing.
+Added 16 to skiplist: 0
+Adding 4	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=4) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 4 to skiplist: 0
+Adding 9	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=9) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 9 to skiplist: 0
+Adding 12	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=12) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 12 to skiplist: 0
+Adding 8	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=8) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 8 to skiplist: 0
+Adding 10	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=10) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 10 to skiplist: 0
+Adding 11	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=11) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 11 to skiplist: 0
+Adding 11	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=11) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 11 to skiplist: 0
+Adding 18	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=18) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 18 to skiplist: 0
+Adding 10	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=10) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 10 to skiplist: 0
+Adding 16	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=16) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 16 to skiplist: 0
+Adding 13	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=13) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 13 to skiplist: 0
+Adding 13	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=13) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 13 to skiplist: 0
+Adding 8	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=8) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 8 to skiplist: 0
+Adding 2	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=2) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 2 to skiplist: 0
+Adding 5	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=5) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 5 to skiplist: 0
+Adding 7	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=7) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 7 to skiplist: 7
+Adding 6	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=6) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 6 to skiplist: 0
+Adding 16	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=16) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+Added 16 to skiplist: 0
+Adding 17	
+Breakpoint 1, slInsert (slHead=0x608010, newKey=17) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) s
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:327
+327		int32_t coin = rand();
+(gdb) 
+328		int32_t shift = 1;
+(gdb) 
+329		uint8_t result = 0;
+(gdb) 
+330		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+332			if(coin&shift)	result++;
+(gdb) 
+334			shift<<=1;
+(gdb) 
+330		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+332			if(coin&shift)	result++;
+(gdb) 
+334			shift<<=1;
+(gdb) 
+330		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+332			if(coin&shift)	result++;
+(gdb) 
+333			else		break;
+(gdb) 
+336		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+337	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219924192) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324336) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219923552) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219924368) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) print nextNode->key
+$1 = 16
+(gdb) s
+75				continue;
+(gdb) s
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324336) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) print nextNode->key
+$2 = 20
+(gdb) s
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+114		uint8_t merging = 0;
+(gdb) 
+118			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324336) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:120
+120			if(nextNode->key < newKey)
+(gdb) 
+126			if(nextNode->key == newKey)
+(gdb) 
+139			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+146				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324337) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:153
+153				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) print lv 
+$3 = 2 '\002'
+(gdb) s
+155				if(merging) // Point to the next node
+(gdb) print merging
+$4 = 0 '\000'
+(gdb) s
+161				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) print newNode->next[lv]
+$5 = 0
+(gdb) ;
+Undefined command: "".  Try "help".
+(gdb) s
+162				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) print newNode->next[lv]
+$6 = 6324336
+(gdb) 
+$7 = 6324336
+(gdb) s
+163				if(lv)	lv--;
+(gdb) 
+118			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219923793) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608010, newKey=17) at skiplist.c:120
+120			if(nextNode->key < newKey)
+(gdb) print nextNode->key
+$8 = 18
+(gdb) 
+$9 = 18
+(gdb) s
+126			if(nextNode->key == newKey)
+(gdb) 
+139			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+141				continue;
+(gdb) 
+

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdatomic.h>
 
 /*
 "log log u levels" "where u is the size of the key space"
@@ -19,7 +20,8 @@ log log u = 3.0346 ≅ 4
 #endif
 typedef struct slNode_ {
 	uint32_t key;
-	struct slNode_ ** next;
+	//struct slNode_ ** next;
+	atomic_uintptr_t  * next;
 	// interact with the x-fast trie
 	struct slNode_ * previous;
 	uint8_t stopflag;
@@ -60,5 +62,7 @@ int8_t slRemove(slNode * slHead, uint32_t key);
 slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value);
 
 uint8_t flipcoins();
+
+slNode * getPtr(uintptr_t p);
 
 #endif
