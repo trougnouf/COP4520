@@ -68,6 +68,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	for(;;)
 	{	
 		nextNode = getPtr(curNode->next[lv]);
+		if(!nextNode)	continue;
 		// Move right until successor is found
 		//if(!nextNode)	continue;
 		if(nextNode->key < newKey)
@@ -115,10 +116,14 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	for(;;)
 	{
 		nextNode = getPtr(curNode->next[lv]);
+		if(!nextNode)	continue;
 		// Move right until successor is found
 		//if(!nextNode)	continue;
-		if(nextNode->key < newKey) // remove nextnode
+		if(nextNode->key <= newKey) // remove nextnode
 		{
+			// Insert on the right of duplicate node.
+			// To insert on the left, use < instead.
+			if(nextNode)//dbg
 			//if(nextNode->stopflag)	continue; // remove
 			curNode = nextNode; // do some checks? del
 			continue;
@@ -127,10 +132,11 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 		if(nextNode->key == newKey)
 		{
 			//printf("merging\n");
-			return slMerge(nextNode, newNode, curNode, lv);
-			/*
+			//return slMerge(nextNode, newNode, curNode, lv);
+			
 			slNode * duplicateNode = nextNode;
 			duplicateNode->stopflag = 1;
+			/*
 			for(;;)
 			{
 				if(getPtr(curNode->next[lv]) != duplicateNode)
@@ -153,6 +159,8 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 		// Mark next node
 		if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
 		{
+			printf("Insertion delayed: next is marked.\n");
+			printf("%u, %u, %u\n",curNode->key, newKey, getPtr(curNode->next[lv])->key);
 			continue;
 		}
 		else // Success: Insert and go down
@@ -162,7 +170,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 			{
 				printf("Reset flag.\n");
 				// Reset flag
-				curNode->next[lv] ^ 1;
+				curNode->next[lv] -= 1;
 				continue;
 			}
 			// Top? Set previous node.
@@ -239,6 +247,7 @@ slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t ol
 	oldNode->stopflag = 1;
 	int8_t lv = oldLv;
 	uint32_t key = newNode->key;
+	slNode * tmpNode;
 	for(;;)
 	{
 		if(getPtr(curNode->next[lv])->key < key)
@@ -246,10 +255,21 @@ slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t ol
 			curNode = getPtr(curNode->next[lv]);
 			continue;
 		}
+		// cas 
 		if(getPtr(curNode->next[lv])->key != key)
 			printf("slMerge: Undefined behavior.\n");
-		newNode->next[lv] = oldNode->next[lv];
+		/*
+		try: tmp=oldnext, oldnext points to new, new points to tmp
+		then get each predecessor next to point to new (cas)
+		*/
+		tmpNode = getPtr(oldNode->next[lv]);
+		oldNode->next[lv] = (atomic_uintptr_t)newNode;
+		newNode->next[lv] = (atomic_uintptr_t)tmpNode;
+		
 		curNode->next[lv] = (atomic_uintptr_t)newNode;
+		
+		//newNode->next[lv] = oldNode->next[lv];
+		//curNode->next[lv] = (atomic_uintptr_t)newNode;
 		if(lv)
 		{
 			lv--;
@@ -276,6 +296,85 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 	slNode * curNode = slHead;
 	slNode * target;
 	uint8_t lv = slLEVELS-1;
+	
+	// Find target
+	slRemoveFindTarget:
+	// Go right
+	while(key > getPtr(curNode->next[lv])->key)
+	{
+		curNode = getPtr(curNode->next[lv]);
+	}
+	/*
+	if((getPtr(curNode->next[lv])->key==MAXKEY)|| getPtr(curNode->next[lv])->key > key)
+	{
+		if(lv)
+		{
+			lv--;
+			goto slRemoveFindTarget;
+		}
+		return -1;
+	}
+	*/
+	// Go down
+	if(getPtr(curNode->next[lv])->key != key)
+	{
+		if(lv)
+		{
+			lv--;
+			goto slRemoveFindTarget;
+		}
+		else return -1;	// 404
+	}
+	
+	// Key found
+	else //if(getPtr(curNode->next[lv])->key == key)
+	{	
+		if(lv == slLEVELS-1)	removedFromTop = 1;
+		target = getPtr(curNode->next[lv]);
+		target->stopflag = 1;
+	}
+	
+	// Remove target
+	slRemoveNext:
+	// Mark target->next (optional? check later)
+	while(atomic_fetch_or(&(target->next[lv]), 1) & 1);
+	while(!atomic_compare_exchange_strong(&(curNode->next[lv]), &target, (uintptr_t)getPtr(target->next[lv])))
+	{
+		/* Reasons for failure:
+			current->next[lv] is marked (try again),
+			current is no longer predecessor
+				(current = getPtr(current->next[lv])) */
+		while(getPtr(curNode->next[lv]) != target)
+			curNode = getPtr(curNode->next[lv]);
+	}
+	if(lv)
+	{
+		lv--;
+		goto slRemoveNext;
+	}
+	else
+	{
+		//free(target->next);
+		//free(target);
+		return removedFromTop?1:0;
+	}
+
+/*		
+		
+		if getPtr(current->next[lv]) != target
+			unmark current->next[lv]
+			current = getPtr(current->next[lv]);
+			try again
+		else (same): current->next[lv] = target->next[lv]
+
+*/
+
+/*
+// This was working
+	int8_t removedFromTop;
+	slNode * curNode = slHead;
+	slNode * target;
+	uint8_t lv = slLEVELS-1;
 	for(;;)
 	{
 		if(!(getPtr(curNode->next[lv])->key==MAXKEY)|| getPtr(curNode->next[lv])->key > key)
@@ -289,6 +388,7 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 		}
 		if(getPtr(curNode->next[lv])->key == key)
 		{
+			
 			if(lv == slLEVELS-1)	removedFromTop = 1;
 			target = getPtr(curNode->next[lv]);
 			target->stopflag = 1;
@@ -300,12 +400,14 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 			}
 			else
 			{
+				free(target->next);
 				free(target);
 				return removedFromTop?1:0;
 			}
 		}
 		curNode=getPtr(curNode->next[lv]);	// go right
 	}
+	*/
 }
 
 // Return a node's predecessor on any given level

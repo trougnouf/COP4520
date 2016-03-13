@@ -1,0 +1,75 @@
+Adding 44	Added 44 to skiplist: 0
+Adding 80	Added 80 to skiplist: 0
+Adding 71	Added 71 to skiplist: 0
+Adding 40	Added 40 to skiplist: 0
+Adding 2	Added 2 to skiplist: 0
+Adding 41	Added 41 to skiplist: 0
+Adding 26	Added 26 to skiplist: 0
+Adding 5	Added 5 to skiplist: 0
+Adding 55	Added 55 to skiplist: 0
+Adding 56	Added 56 to skiplist: 0
+Adding 9	Added 9 to skiplist: 0
+Adding 34	Added 34 to skiplist: 0
+Adding 18	Added 18 to skiplist: 0
+Adding 77	Added 77 to skiplist: 0
+Adding 11	Added 11 to skiplist: 0
+Adding 19	Added 19 to skiplist: 0
+Adding 4	Added 4 to skiplist: 0
+Removed 76 from skiplist: -1
+Adding 53	Added 53 to skiplist: 0
+Adding 44	Added 44 to skiplist: 0
+Adding 55	Added 55 to skiplist: 0
+Adding 57	Added 57 to skiplist: 0
+Adding 77	Added 77 to skiplist: 0
+Adding 21	Added 21 to skiplist: 0
+Adding 40	Added 40 to skiplist: 0
+Adding 29	Added 29 to skiplist: 0
+Removed 36 from skiplist: -1
+Adding 73	Added 73 to skiplist: 0
+Adding 6	Added 6 to skiplist: 0
+Adding 41	Added 41 to skiplist: 0
+Adding 82	Added 82 to skiplist: 0
+Adding 70	Added 70 to skiplist: 0
+Adding 54	Added 54 to skiplist: 0
+Adding 58	Added 58 to skiplist: 0
+Adding 57	Added 57 to skiplist: 0
+Removed 55 from skiplist: 0
+Adding 82	Added 82 to skiplist: 0
+Adding 88	Added 88 to skiplist: 0
+Adding 69	Added 69 to skiplist: 0
+Adding 87	Added 87 to skiplist: 0
+Adding 79	Added 79 to skiplist: 0
+Adding 54	Added 54 to skiplist: 0
+Adding 76	Added 76 to skiplist: 0
+Adding 66	Added 66 to skiplist: 0
+Adding 74	Added 74 to skiplist: 0
+Removed 97 from skiplist: -1
+Adding 64	Added 64 to skiplist: 0
+Adding 38	Added 38 to skiplist: 0
+Adding 10	Added 10 to skiplist: 0
+Removed 21 from skiplist: 0
+Thread: 631338896: Goodbye.
+The end.
+	Threads: 1, tasks: 50
+Tasks breakdown (%):
+	insert: 90, find: 0, remove: 10
+Skip list: 16 levels.
+Time elapsed:
+	0.000833s
+
+Level 15: 0, 100
+Level 14: 0, 100
+Level 13: 0, 100
+Level 12: 0, 100
+Level 11: 0, 100
+Level 10: 0, 100
+Level 9: 0, 100
+Level 8: 0, 100
+Level 7: 0, 100
+Level 6: 0, 100
+Level 5: 0, 10, 100
+Level 4: 0, 10, 70, 100
+Level 3: 0, 10, 54, 70, 74, 100
+Level 2: 0, 2, 10, 41, 44, 54, 70, 73, 74, 79, 100
+Level 1: 0, 2, 4, 6, 10, 19, 21, 26, 29, 38, 40, 41, 41, 44, 53, 54, 55, 57, 69, 70, 73, 74, 77, 79, 82, 100
+Level 0: 0, 2, 4, 5, 6, 9, 10, 18, 19, 21, 26, 29, 34, 38, 40, 40, 41, 41, 44, 53, 54, 55, 56, 57, 57, 58, 64, 66, 69, 70, 71, 73, 74, 76, 77, 77, 79, 80, 82, 87, 88, 100
