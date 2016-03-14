@@ -119,10 +119,10 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 		if(!nextNode)	continue;
 		// Move right until successor is found
 		//if(!nextNode)	continue;
-		if(nextNode->key <= newKey) // remove nextnode
+		if(nextNode->key < newKey) // remove nextnode
 		{
-			// Insert on the right of duplicate node.
-			// To insert on the left, use < instead.
+			// Insert on the left of duplicate node.
+			// To insert on the left, use <= instead.
 			if(nextNode)//dbg
 			//if(nextNode->stopflag)	continue; // remove
 			curNode = nextNode; // do some checks? del
@@ -131,11 +131,39 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 		// Merge nodes if exists on lower level
 		if(nextNode->key == newKey)
 		{
+			//slNode * duplicateNode = nextNode;
+			for(;lv >= 0; lv--)
+			{
+				// Mark next node for deletion
+				while(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1);
+				newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
+				while(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+				{
+					if(getPtr(curNode->next[lv]) != nextNode)
+						curNode = getPtr(curNode->next[lv]);
+					//lv++;
+					//continue;
+				}
+				//nextNode->next[lv] &= (UINTPTR_MAX-1);//dbg
+				//while(!atomic_compare_exchange_strong(&(newNode->next[lv]), &nextNode, (uintptr_t)getPtr(nextNode->next[lv])));
+			}
+			free(nextNode->next);
+			free(nextNode);
+			if(numLv == slLEVELS-1)	return newNode;
+			else	return NULL;
+		/*
+			*/
+			// duplicate node is on the right (1st found)
+		/*for each level:
+			mark the next node if matching key
+			CAS(&(newNode->next[lv]), &duplicateNode, (uintptr_t)getPtr(target->next[lv])
+		*/
+				
 			//printf("merging\n");
 			//return slMerge(nextNode, newNode, curNode, lv);
 			
-			slNode * duplicateNode = nextNode;
-			duplicateNode->stopflag = 1;
+			//slNode * duplicateNode = nextNode;
+			//duplicateNode->stopflag = 1;
 			/*
 			for(;;)
 			{
@@ -159,18 +187,27 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 		// Mark next node
 		if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
 		{
-			printf("Insertion delayed: next is marked.\n");
+			
+			//printf("Insertion delayed: next is marked.\n");
+			return slInsert(slHead, newKey);
+			curNode = slHead;
 			printf("%u, %u, %u\n",curNode->key, newKey, getPtr(curNode->next[lv])->key);
+			if(curNode->stopflag)
+			{
+				curNode = slHead;	// replace w/findPredecessor function
+				printf("for deletion\t");
+			}
 			continue;
 		}
 		else // Success: Insert and go down
 		{
+		//printf("Insert marked %u->%u\n", curNode->key, getPtr(curNode->next[lv])->key);
 			// Verify that next is still valid
 			if(getPtr(curNode->next[lv]) != nextNode)
 			{
 				printf("Reset flag.\n");
 				// Reset flag
-				curNode->next[lv] -= 1;
+				curNode->next[lv] &= (UINTPTR_MAX-1);
 				continue;
 			}
 			// Top? Set previous node.
@@ -338,24 +375,33 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 	slRemoveNext:
 	// Mark target->next (optional? check later)
 	while(atomic_fetch_or(&(target->next[lv]), 1) & 1);
+	printf("Remove marked %u->%u\n", target->key, getPtr(target->next[lv])->key);
+	
 	while(!atomic_compare_exchange_strong(&(curNode->next[lv]), &target, (uintptr_t)getPtr(target->next[lv])))
 	{
+		printf("Remove unmarked %u->%u\n", target->key, getPtr(target->next[lv])->key);
+		target->next[lv] &= (UINTPTR_MAX-1);//dbg
 		/* Reasons for failure:
 			current->next[lv] is marked (try again),
 			current is no longer predecessor
 				(current = getPtr(current->next[lv])) */
 		while(getPtr(curNode->next[lv]) != target)
 			curNode = getPtr(curNode->next[lv]);
+		
 	}
+	printf("Remove unmarked %u->%u\n", target->key, getPtr(target->next[lv])->key);
+	target->next[lv] &= (UINTPTR_MAX-1);//dbg
 	if(lv)
 	{
+		if(lv == slLEVELS-1)
+			getPtr(target->next[lv])->previous = curNode;
 		lv--;
 		goto slRemoveNext;
 	}
 	else
 	{
-		//free(target->next);
-		//free(target);
+		free(target->next);
+		free(target);
 		return removedFromTop?1:0;
 	}
 
@@ -370,7 +416,7 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 */
 
 /*
-// This was working
+// This was working (=not crashing)
 	int8_t removedFromTop;
 	slNode * curNode = slHead;
 	slNode * target;
