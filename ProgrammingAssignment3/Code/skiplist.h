@@ -3,7 +3,7 @@
 
 
 #include "skiplist.h"
-#include "testcase1.h"
+#include "testcase1.h"	// Removable
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +17,8 @@ log log u = 3.0346 ≅ 4
 */
 #ifndef slLEVELS
 #define slLEVELS 4	//TODO dynamic levels
+#define MAXCHAOS 5
+#define slMERGEDUPLICATES 0
 #endif
 typedef struct slNode_ {
 	uint32_t key;
@@ -40,7 +42,7 @@ return -1: newKey exists
 return 0:  sucess, nothing left to do
 return 1:  sucess, top-level reached (x-fast trie required)
 */
-slNode * slInsert(slNode * slHead, uint32_t newKey);
+slNode * slInsert(slNode * slHead, uint32_t key);
 
 
 // return a pointer to the node which contains the desired key, or NULL if 404
@@ -63,8 +65,10 @@ slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value);
 
 uint8_t flipcoins();
 
-slNode * getPtr(uintptr_t p);
+slNode * getPtr(atomic_uintptr_t p);
 
 slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t oldLv);
+
+void slPrint(slNode * slHead);
 
 #endif

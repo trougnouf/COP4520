@@ -5,10 +5,11 @@
 Change these values to generate a different test case.
 */
 
-// Used elsewhere
-#define NUMTHREADS 4		// used in handler.c
-#define NUMTASKS 500000*NUMTHREADS	// used in handler.c and testcase1.c
-#define slLEVELS 16		// skiplist.c
+#define NUMTHREADS 8
+#define NUMTASKS 500000*NUMTHREADS
+#define slLEVELS 16		// 4 recommended up to MAXKEY=2^30,
+				// 16 works better with insufficient removes
+#define slMERGEDUPLICATES 0	// 0: detect prior, 1: merge higher (unstable)
 
 // Key values
 #define MINKEY 0
@@ -19,9 +20,10 @@ Change these values to generate a different test case.
 #define PERCENTFIND 0
 #define PERCENTREMOVE 0
 
-#define DBG_PRINTSL 0
+// Debugging
+#define MAXCHAOS 50	// # of restart before things happen (reset curNode)
+#define DBG_PRINTSL 0	// Print SL. 0: never, 1: end, 2: when chaos happens
 #define VERBOSE 0
-// debugging
 /*	VERBOSE:
 		0: Result only
 		1: Display each task

@@ -19,6 +19,7 @@ Task * loadTestCase()
 		else						randTask=REMOVE;
 		todolist[i].task = randTask;
 		todolist[i].inData = (rand() % (MAXKEY-1))+1;
+		if(todolist[i].inData == 0)return NULL;
 	}
 	for(;i<NUMTASKS+NUMTHREADS; i++)	todolist[i].task = TERM;
 	return todolist;

@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdatomic.h>
 
-slNode * getPtr(uintptr_t p)	
+slNode * getPtr(atomic_uintptr_t p)	
 {
 	return (slNode *)(p & (UINTPTR_MAX ^ 1));
 }
@@ -30,23 +30,48 @@ slNode * slInit()
 // return a pointer to the node which contains the desired key, or NULL if 404
 slNode * slFind(slNode * slHead, uint32_t key)
 {
+	// Initialize variables
 	slNode * curNode = slHead;
-	uint8_t lv = slLEVELS-1;
-	for(;;)
+	slNode * nextNode;
+	int8_t lv;
+	uint8_t chaosmeter = 0;
+	
+	// Go through each level
+	for(lv=slLEVELS-1;lv>=0;lv--)
 	{
-		if(!(getPtr(curNode->next[lv])->key==MAXKEY) || getPtr(curNode->next[lv])->key > key)
+		slFinding:	// Come back without decrementing lv
+		
+		if(chaosmeter >= MAXCHAOS )
 		{
-			if(lv)
-			{
-				lv--;
-				continue;
-			}
-			return NULL;
+			printf("(F%6u) Maximum chaos reached, resetting chaosmeter and curNode\n", key);
+			chaosmeter = 0;
+			curNode = slHead;
+			#if DBG_PRINTSL == 2
+			slPrint(slHead);
+			#endif
 		}
-		if(getPtr(curNode->next[lv])->key == key)
-			return getPtr(curNode->next[lv]);	// found
-		curNode=getPtr(curNode->next[lv]);	// go right
+
+		nextNode = getPtr(curNode->next[lv]);
+		if(!nextNode)
+		{
+			chaosmeter++;
+			goto slFinding;
+		}
+		// Move right until successor is found
+		if(nextNode->key < key)
+		{
+			curNode = nextNode; // do some checks? del
+			goto slFinding;
+		}
+		
+		// Found key
+		if(nextNode->key == key)
+		{
+			return nextNode;
+		}
 	}
+	return NULL;
+
 }
 
 /* Insert key into skiplist.
@@ -57,6 +82,9 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 {
 	// Verify that new key is valid
 	if(key >= MAXKEY || key <= MINKEY)	return NULL;
+	#if slMERGEDUPLICATES == 0
+	if(slFind(slHead, key))	return NULL;
+	#endif
 	
 	// Determine # of levels
 	uint8_t numLv = flipcoins()-1;
@@ -66,6 +94,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	slNode * nextNode;
 	int8_t lv;
 	int8_t started = 0;
+	uint8_t chaosmeter = 0;
 	
 	// Initialize new node
 	slNode * newNode = malloc(sizeof(slNode));
@@ -76,6 +105,16 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	for(lv=slLEVELS-1;lv>=0;lv--)
 	{
 		slInserting:	// Come back without decrementing lv
+		
+		if(chaosmeter >= MAXCHAOS )
+		{
+			printf("(I%6u) Maximum chaos reached, resetting chaosmeter and curNode.\n", key);
+			chaosmeter = 0;
+			curNode = slHead;
+			#if DBG_PRINTSL == 2
+			slPrint(slHead);
+			#endif
+		}
 
 		// Move right (this crashes)
 		/*
@@ -88,7 +127,11 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 		*/
 		
 		nextNode = getPtr(curNode->next[lv]);
-		if(!nextNode)	goto slInserting;
+		if(!nextNode)
+		{
+			chaosmeter++;
+			goto slInserting;
+		}
 		// Move right until successor is found
 		if(nextNode->key < key)
 		{
@@ -107,25 +150,26 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 				free(newNode);
 				return NULL;
 			}
-			
+			#if slMERGEDUPLICATES == 1
 			// Insertion started? Merge
-			
 			// Mark node for deletion
-			if(!(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1))
+			if(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1)
 			{
-				//printf("Merge: bit stealing failed.\n");
-				// Already marked
-				//curNode = slHead; // dbg
-				goto slInserting;
+				printf("Merge: bit stealing failed (%u).\n",key);
+				// Already marked for deletion
+				chaosmeter++;
+				continue;
+				//goto slInserting;
 			}
+			nextNode->stopflag = 1;
 			newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
 			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
 			{
-				//printf("Merge: CAS failed (%u).\n", key);
+				printf("Merge: CAS failed (cur:%u,nxt:%u, k:%u).\n", curNode->next[lv],nextNode,key);
 				// CAS failed. Reset flag and start over.
 				//if(nextNode->next[lv]) // dbg, prob useless
 				nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
-				//curNode = slHead; // dbg
+				chaosmeter++;
 				goto slInserting;
 			}
 			if(lv)
@@ -139,7 +183,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			free(nextNode->next);
 			free(nextNode);
 			break;
-			
+			#endif
 		}
 		
 		// Insert
@@ -150,7 +194,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			{
 				// Insert failed: start over.
 				printf("Insert failed: starting over (%u).\n", key);
-				//curNode = slHead; // dbg
+				chaosmeter++;
 				goto slInserting;
 			}
 			started = 1;
@@ -361,3 +405,18 @@ uint8_t flipcoins()
 	return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
 }
 
+void slPrint(slNode * slHead)
+{
+	slNode * tmpNode;
+	for(int8_t lv = slLEVELS-1; lv >= 0; lv--)
+	{
+		printf("Level %u: ", lv);
+		tmpNode = slHead;
+		while(tmpNode->key != MAXKEY)
+		{
+			printf("%u, ", tmpNode->key);
+			tmpNode = getPtr(tmpNode->next[lv]);
+		}
+		printf("%u\n", tmpNode->key);
+	}
+}

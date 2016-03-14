@@ -145,7 +145,7 @@ int main()
 	}
 	printResults(&begTime);
 	
-	#if DBG_PRINTSL
+	#if DBG_PRINTSL == 1
 	// Print the skiplist
 	slNode * tmpSLNode;
 	printf("\n");
