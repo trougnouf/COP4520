@@ -8,7 +8,7 @@ Change these values to generate a different test case.
 // Used elsewhere
 #define NUMTHREADS 4		// used in handler.c
 #define NUMTASKS 500000*NUMTHREADS	// used in handler.c and testcase1.c
-#define slLEVELS 16		// skiplist.c
+#define slLEVELS 4		// skiplist.c
 
 // Key values
 #define MINKEY 0
@@ -19,7 +19,7 @@ Change these values to generate a different test case.
 #define PERCENTFIND 0
 #define PERCENTREMOVE 0
 
-#define DBG_PRINTSL 1
+#define DBG_PRINTSL 0
 #define VERBOSE 0
 // debugging
 /*	VERBOSE:

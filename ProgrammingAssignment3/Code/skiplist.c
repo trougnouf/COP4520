@@ -53,277 +53,77 @@ slNode * slFind(slNode * slHead, uint32_t key)
 Return pointer to new node if top level reached, NULL otherwise.
 slHead parameter should be xtrie findPredecessor
 */
-slNode * slInsert(slNode * slHead, uint32_t newKey)
+slNode * slInsert(slNode * slHead, uint32_t key)
 {
 	// Verify that new key is valid
-	if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+	if(key >= MAXKEY || key <= MINKEY)	return NULL;
 	
 	// Determine # of levels
 	uint8_t numLv = flipcoins()-1;
 	
+	// Initialize variables
 	slNode * curNode = slHead;
 	slNode * nextNode;
-	int8_t lv = slLEVELS-1;
-	// Find a predecessor node on current level (numLv-1)
-	// return NULL if key exists on lv >= numLv
-	for(;;)
-	{	
-		nextNode = getPtr(curNode->next[lv]);
-		if(!nextNode)	continue;
-		// Move right until successor is found
-		//if(!nextNode)	continue;
-		if(nextNode->key < newKey)
-		{
-			curNode = nextNode; // do some checks? del
-			continue;
-		}
-		// Move down until insertion level begins
-		if(lv != numLv)
-		{
-			lv--;
-			continue;
-		}
-		// Found 1st successor. Check if key exists, check/set flag
-		else // lv == numLv
-		{
-			// Key exists on lv? No insert
-			if(nextNode->key == newKey)	return NULL;
-			break;
-			/*
-			// Flag next pointer or try again
-			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1)
-				continue;
-			else
-			{
-				// Verify that next is still valid
-				if(getPtr(curNode->next[lv]) != nextNode)
-				{
-					// Reset flag
-					curNode->next[lv] ^ 1;
-					continue;
-				}
-				break;
-			}
-			*/
-		}
-	}
+	int8_t lv;
 	
-	// Create and insert new node.
-	// - Check for duplicate (merge)
-	// Create new node
+	// Initialize new node
 	slNode * newNode = malloc(sizeof(slNode));
 	newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
-	newNode->key = newKey;
-	for(;;)
+	newNode->key = key;
+	
+	// Go through each level
+	for(slLEVELS-1;lv>=0;lv--)
 	{
-		slInsertion:
-		nextNode = getPtr(curNode->next[lv]);
-		if(!nextNode)	continue;
-		// Move right until successor is found
-		//if(!nextNode)	continue;
-		if(nextNode->key < newKey) // remove nextnode
+		slInserting:	// Come back without decrementing lv
+		
+		// Move right
+		while(getPtr(curNode->next[lv])->key < key)
 		{
-			// Insert on the left of duplicate node.
-			// To insert on the left, use <= instead.
-			if(nextNode)//dbg
-			//if(nextNode->stopflag)	continue; // remove
-			curNode = nextNode; // do some checks? del
-			continue;
+			curNode = getPtr(curNode->next[lv]);
 		}
-		// Merge nodes if exists on lower level
-		if(nextNode->key == newKey)
+		nextNode = getPtr(curNode->next[lv]);
+		
+		// Duplicate found
+		if(nextNode->key == key)
 		{
-			//slNode * duplicateNode = nextNode;
+			// Insertion not started? Abort
+			if(lv >= numLv)
+			{
+				free(newNode->next);
+				free(newNode);
+				return NULL;
+			}
+			// Insertion started? Merge
 			for(;lv >= 0; lv--)
 			{
-				// Mark next node for deletion
-				while(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1);
+				// Mark node for deletion
+				while(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1)
+					printf("Merge: bit stealing failed.\n");
 				newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
-				while(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+				if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
 				{
-					if(getPtr(curNode->next[lv]) != nextNode)
-						curNode = getPtr(curNode->next[lv]);
-					//lv++;
-					//continue;
+					printf("Merge: CAS failed.\n");
+					// CAS failed. Reset flag and start over.
+					nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
+					goto slInserting;
 				}
-				//nextNode->next[lv] &= (UINTPTR_MAX-1);//dbg
-				//while(!atomic_compare_exchange_strong(&(newNode->next[lv]), &nextNode, (uintptr_t)getPtr(nextNode->next[lv])));
 			}
 			free(nextNode->next);
 			free(nextNode);
-			if(numLv == slLEVELS-1)	return newNode;
-			else	return NULL;
+			break;
 		}
-		/*
-			*/
-			// duplicate node is on the right (1st found)
-		/*for each level:
-			mark the next node if matching key
-			CAS(&(newNode->next[lv]), &duplicateNode, (uintptr_t)getPtr(target->next[lv])
-		*/
-				
-			//printf("merging\n");
-			//return slMerge(nextNode, newNode, curNode, lv);
-			
-			//slNode * duplicateNode = nextNode;
-			//duplicateNode->stopflag = 1;
-			/*
-			for(;;)
-			{
-				if(getPtr(curNode->next[lv]) != duplicateNode)
-				{
-					curNode = getPtr(curNode->next[lv]
-				}
-			}
-			
-			if(!merging)
-			{
-				merging = lv;
-				duplicateNode = nextNode;
-				duplicateNode->stopflag = 1;
-			}
-			*/
-			//slMerge(curNode, nextNode, lv, newNode, numLv);
-			//goto endOfInsert;
 		
-		// Insert and go down (third? attempt)
+		// Insert
 		newNode->next[lv] = (uintptr_t)nextNode;
-		while(!atomic_compare_exchange_strong(&curNode->next[lv], &nextNode, (uintptr_t)newNode))
+		if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
 		{
-			// CAS failed because
-			// curNode->next is marked for deletion
-			// or
-			// curNode->next does not point to nextNode
-			
-			// Check if curNode is marked for deletion:
-			if(!curNode || curNode->next[lv] & 1)
-			{
-				printf("slInsert starting over\n");
-				// Start lv over
-				curNode = slHead;
-				goto slInsertion;
-			}
-			// Check if curnext != next
-			else if(getPtr(curNode->next[lv]) != nextNode)
-			{
-				// Update current node
-				printf("slInsert updating curNode\n");
-				while(getPtr(curNode->next[lv])->key < newKey)
-				{
-					curNode = getPtr(curNode->next[lv]);
-				}
-				nextNode = getPtr(curNode->next[lv]);
-				continue;
-			}
-			printf("\nPanic\n");
-			//printf("curNode (self/next/key): %u / %u / %u\nnextNode: %u / %u / %u\nKey: %u\nnewNode: %u / %u / %u\n");
-		}
-		
-		if(lv)
-		{	
-			if(lv == slLEVELS-1)	newNode->previous = curNode;
-			lv--;
-		}
-		else
-		{
-			if(numLv == slLEVELS-1)	return newNode;
-			else	return NULL;
-		}
-	}	
-		/*
-		// Insert and go down
-		// Mark next node
-		if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
-		{
-			
-			//printf("Insertion delayed: next is marked.\n");
-			return slInsert(slHead, newKey);
-			curNode = slHead;
-			printf("%u, %u, %u\n",curNode->key, newKey, getPtr(curNode->next[lv])->key);
-			if(curNode->stopflag)
-			{
-				curNode = slHead;	// replace w/findPredecessor function
-				printf("for deletion\t");
-			}
-			continue;
-		}
-		else // Success: Insert and go down
-		{
-		//printf("Insert marked %u->%u\n", curNode->key, getPtr(curNode->next[lv])->key);
-			// Verify that next is still valid
-			if(getPtr(curNode->next[lv]) != nextNode)
-			{
-				printf("Reset flag.\n");
-				// Reset flag
-				curNode->next[lv] &= (UINTPTR_MAX-1);
-				continue;
-			}
-			// Top? Set previous node.
-			if(lv == slLEVELS-1)	newNode->previous = curNode;
-			// Do the insertion:
-			newNode->next[lv] = (atomic_uintptr_t)nextNode;
-			curNode->next[lv] = (atomic_uintptr_t)newNode;
-			if(lv)	lv--;
-			else	break;
+			// Insert failed: start over.
+			printf("Insert failed: starting over.");
+			goto slInserting;
 		}
 	}
-	
-	endOfInsert:
 	if(numLv == slLEVELS-1)	return newNode;
 	else	return NULL;
-	*/
-	
-	/*
-	// Step 1:	Find bottom node to insert on the right of, keeping
-	//		track of every node on the way down
-	slNode * curNode[slLEVELS];
-	uint8_t lv = slLEVELS-1;
-	curNode[lv] = slHead;
-	for(;;)
-	{
-		// If next node is larger: go down. Else: move right.
-		if(curNode[lv]->next[lv]->key > newKey)
-		{
-			if(lv)
-			{
-				lv--;
-				curNode[lv] = curNode[lv+1];
-				continue;
-			}
-			break;	// All the way down -> done
-		}
-		if(curNode[lv]->next[lv]->key == newKey)
-			return NULL;	// Key already exists
-		curNode[lv]= curNode[lv]->next[lv];	// go right
-	}
-	// Step 2: Insert on the right of curNode for each level
-	slNode * newNode = malloc(sizeof(slNode));
-	newNode->next = malloc(sizeof(slNode*)*(numLv));
-	newNode->key = newKey;
-	slNode * tmpnextnode;
-	for(lv=0; lv < numLv; lv++)	// Insert from the bottom up
-	{
-		//check stop flag:
-		if(curNode[lv]->next[lv]->stopflag)
-			curNode[lv]->next[lv] = findPredecessor(curNode, lv,
-			 newKey);
-		// Using Harris' solution: 
-		// make newnode's next pointer point to curnode's next node
-		tmpnextnode = curNode[lv]->next[lv];
-		newNode->next[lv] = tmpnextnode;
-		// make curnode's next pointer point to new node iff curnode
-		// hasn't changed, else start over.
-		if(!atomic_compare_exchange_strong(&curNode[lv]->next[lv],
-		  &tmpnextnode, newNode))
-			lv--;	// start over	
-	}
-	if(numLv == slLEVELS)
-	{
-		newNode->previous = curNode[lv-1];
-		return NULL;
-	}
-	return newNode;
-	*/
 }
 
 slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t oldLv)
