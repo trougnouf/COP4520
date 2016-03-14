@@ -16,9 +16,14 @@ let u = 2^30 = 2147483648 = 1073741824
 log log u = 3.0346 ≅ 4
 */
 #ifndef slLEVELS
-#define slLEVELS 4	//TODO dynamic levels
-#define MAXCHAOS 5
-#define slMERGEDUPLICATES 0
+#define slLEVELS 4	// 1-128 (sane values: 4-16) TODO dynamic levels
+#define MAXCHAOS 50
+#define slMERGEDUPLICATES 0	// 0: detect duplicates prior to insertion
+				// 1: start inserting right away, merge
+				//    duplicates if they come up after the 
+				//    insertion has begun. Slower insertion, 
+				//    faster retrieval of frequently used nodes.
+				//    (unstable)
 #endif
 typedef struct slNode_ {
 	uint32_t key;
@@ -28,7 +33,6 @@ typedef struct slNode_ {
 	struct slNode_ * previous;
 	uint8_t stopflag;
 } slNode;
-
 
 
 /*

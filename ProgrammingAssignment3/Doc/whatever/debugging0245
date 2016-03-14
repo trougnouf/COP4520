@@ -1,0 +1,1844 @@
+Breakpoint 1, slInsert (slHead=0x608060, newKey=40) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) c
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=6) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=11) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=24) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=18) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=48) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=19) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=22) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000401083 in slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+
+
+[trougnouf@d Code]$ gdb ./a.out 
+GNU gdb (GDB) 7.10.1
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./a.out...done.
+(gdb) break skiplist.c:58
+Breakpoint 1 at 0x40107f: file skiplist.c, line 58.
+(gdb) s
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) run
+Starting program: /home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+[New Thread 0x7ffff781a700 (LWP 948)]
+[Switching to Thread 0x7ffff781a700 (LWP 948)]
+
+Breakpoint 1, slInsert (slHead=0x608070, newKey=44) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) s
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:326
+326		int32_t coin = rand();
+(gdb) 
+327		int32_t shift = 1;
+(gdb) 
+328		uint8_t result = 0;
+(gdb) 
+329		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+331			if(coin&shift)	result++;
+(gdb) 
+333			shift<<=1;
+(gdb) 
+329		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+331			if(coin&shift)	result++;
+(gdb) 
+333			shift<<=1;
+(gdb) 
+329		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+331			if(coin&shift)	result++;
+(gdb) 
+332			else		break;
+(gdb) 
+335		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+336	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv));
+(gdb) 
+113		uint8_t merging = 0;
+(gdb) 
+117			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:119
+119			if(nextNode->key < newKey)
+(gdb) 
+125			if(nextNode->key == newKey)
+(gdb) 
+138			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+145				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324433) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:152
+152				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+154				if(merging) // Point to the next node
+(gdb) 
+160				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+161				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+162				if(lv)	lv--;
+(gdb) 
+117			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:119
+119			if(nextNode->key < newKey)
+(gdb) 
+125			if(nextNode->key == newKey)
+(gdb) 
+138			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+145				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324433) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:152
+152				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+154				if(merging) // Point to the next node
+(gdb) 
+160				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+161				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+162				if(lv)	lv--;
+(gdb) 
+117			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:119
+119			if(nextNode->key < newKey)
+(gdb) 
+125			if(nextNode->key == newKey)
+(gdb) 
+138			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+145				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324433) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=44) at skiplist.c:152
+152				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+154				if(merging) // Point to the next node
+(gdb) 
+160				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+161				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+162				if(lv)	lv--;
+(gdb) 
+163				else	break;
+(gdb) 
+168		if(merging)
+(gdb) 
+173		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+174		else	return NULL;
+(gdb) 
+228	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:73
+73					printf(	"Added %d to skiplist: %u\n",
+(gdb) 
+74						todolist[tsk].inData, tmpSLNode!=NULL);
+(gdb) 
+73					printf(	"Added %d to skiplist: %u\n",
+(gdb) 
+
+
+
+
+
+
+Added 44 to skiplist: 0
+78					break;
+(gdb) 
+105		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+71							todolist[tsk].inData);
+(gdb) 
+70					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608070, newKey=80) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:326
+326		int32_t coin = rand();
+(gdb) 
+327		int32_t shift = 1;
+(gdb) 
+328		uint8_t result = 0;
+(gdb) 
+329		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+331			if(coin&shift)	result++;
+(gdb) 
+332			else		break;
+(gdb) 
+335		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+336	}
+(gdb) 
+slInsert (slHead=0x608070, newKey=80) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+
+
+
+Starting program: /home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+[New Thread 0x7ffff781a700 (LWP 4523)]
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffff781a700 (LWP 4523)]
+0x0000000000401083 in slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) s
+[Thread 0x7ffff781a700 (LWP 4523) exited]
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+(gdb) q
+[trougnouf@d Code]$ git commit -m "slInsert is close to functional. Merge creates a bottleneck and/orgdb ./a.out 
+GNU gdb (GDB) 7.10.1
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./a.out...done.
+(gdb) break skiplist.c:233
+Breakpoint 1 at 0x401294: file skiplist.c, line 233.
+(gdb) run
+Starting program: /home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+[New Thread 0x7ffff781a700 (LWP 4611)]
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffff781a700 (LWP 4611)]
+0x0000000000401083 in slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) print lv
+$1 = 3 '\003'
+(gdb) print nextNode
+$2 = (slNode *) 0x0
+(gdb) print curNode
+$3 = (slNode *) 0x7ffff0000aa0
+(gdb) print curNode->key
+$4 = 19
+(gdb) print newKey
+$5 = 22
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 4607] will be killed.
+
+Quit anyway? (y or n) y
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ 
+[trougnouf@d Code]$ gdb ./a.out 
+GNU gdb (GDB) 7.10.1
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-unknown-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./a.out...done.
+(gdb) b skiplist.c:58
+Breakpoint 1 at 0x401022: file skiplist.c, line 58.
+(gdb) s
+The program is not being run.
+(gdb) run
+`/home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out' has changed; re-reading symbols.
+Starting program: /home/trougnouf/Dev/COP4520/ProgrammingAssignment3/Code/a.out 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+[New Thread 0x7ffff781a700 (LWP 4672)]
+[Switching to Thread 0x7ffff781a700 (LWP 4672)]
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=40) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) s
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=40) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=6) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=140737219922113) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=6) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=11) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922192) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=140737219922113) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=11) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=24) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922192) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922272) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=140737219922113) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=24) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=18) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922192) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+120				curNode = nextNode; // do some checks? del
+(gdb) 
+121				continue;
+(gdb) 
+171		}
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922272) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+120				curNode = nextNode; // do some checks? del
+(gdb) 
+121				continue;
+(gdb) 
+171		}
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922352) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=140737219922353) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=18) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=48) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+80				lv--;
+(gdb) 
+81				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922352) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922112) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=48) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+175		else	return NULL;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=19) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+78			if(lv != numLv)
+(gdb) 
+87				if(nextNode->key == newKey)	return NULL;
+(gdb) 
+88				break;
+(gdb) 
+111		slNode * newNode = malloc(sizeof(slNode));
+(gdb) 
+112		newNode->next = malloc(sizeof(atomic_uintptr_t)*(numLv+1));
+(gdb) 
+113		newNode->key = newKey;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922432) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+120				curNode = nextNode; // do some checks? del
+(gdb) 
+121				continue;
+(gdb) 
+171		}
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=6324416) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=6324417) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+116			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922352) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:118
+118			if(nextNode->key < newKey)
+(gdb) 
+124			if(nextNode->key == newKey)
+(gdb) 
+150			if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
+(gdb) 
+157				if(getPtr(curNode->next[lv]) != nextNode)
+(gdb) 
+getPtr (p=140737219922353) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=19) at skiplist.c:164
+164				if(lv == slLEVELS-1)	newNode->previous = curNode;
+(gdb) 
+166				else	newNode->next[lv] = (atomic_uintptr_t)nextNode;
+(gdb) 
+167				curNode->next[lv] = (atomic_uintptr_t)newNode;
+(gdb) 
+168				if(lv)	lv--;
+(gdb) 
+169				else	break;
+(gdb) 
+174		if(numLv == slLEVELS-1)	return newNode;
+(gdb) 
+229	}
+(gdb) 
+thread_dsHandler (args=0x7fffffffe8b0) at handler.c:82
+82					break;
+(gdb) 
+109		}
+(gdb) 
+35			tsk = atomic_fetch_add(sharedData->tsknum, 1);
+(gdb) 
+47			switch(todolist[tsk].task)
+(gdb) 
+75							todolist[tsk].inData);
+(gdb) 
+74					tmpSLNode = slInsert(sharedData->slHead,
+(gdb) 
+
+Breakpoint 1, slInsert (slHead=0x608060, newKey=22) at skiplist.c:59
+59		if(newKey >= MAXKEY || newKey <= MINKEY)	return NULL;
+(gdb) 
+62		uint8_t numLv = flipcoins()-1;
+(gdb) 
+flipcoins () at skiplist.c:356
+356		int32_t coin = rand();
+(gdb) 
+357		int32_t shift = 1;
+(gdb) 
+358		uint8_t result = 0;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+363			shift<<=1;
+(gdb) 
+359		for(uint8_t i=0; i<slLEVELS-1; i++)
+(gdb) 
+361			if(coin&shift)	result++;
+(gdb) 
+362			else		break;
+(gdb) 
+365		return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+(gdb) 
+366	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=22) at skiplist.c:64
+64		slNode * curNode = slHead;
+(gdb) 
+66		int8_t lv = slLEVELS-1;
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=140737219922592) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+74				curNode = nextNode; // do some checks? del
+(gdb) 
+75				continue;
+(gdb) 
+106		}
+(gdb) 
+70			nextNode = getPtr(curNode->next[lv]);
+(gdb) 
+getPtr (p=0) at skiplist.c:11
+11		return (slNode *)(p & (UINTPTR_MAX ^ 1));
+(gdb) 
+12	}
+(gdb) 
+slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000401083 in slInsert (slHead=0x608060, newKey=22) at skiplist.c:72
+72			if(nextNode->key < newKey)
+(gdb) 
+[Thread 0x7ffff781a700 (LWP 4672) exited]
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) print lv
+No symbol "lv" in current context.
+(gdb) 
+

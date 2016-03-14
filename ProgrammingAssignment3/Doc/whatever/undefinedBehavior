@@ -1,0 +1,17 @@
+[trougnouf@d Code]$ gcc -pthread handler.c testcase1.c skiplist.c xtrie.c -g && ./a.out
+Insert failed: starting over (9303).
+Insert failed: starting over (27183).
+Merge: CAS failed (cur:3624322033,nxt:3624322033, k:51073).
+Segmentation fault (core dumped)
+[trougnouf@d Code]$ 
+
+
+
+
+
+
+
+
+
+
+while(((uintptr_t)nextNode % 2))	printf("%u\n", nextNode);

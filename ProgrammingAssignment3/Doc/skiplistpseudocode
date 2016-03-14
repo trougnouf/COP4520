@@ -1,0 +1,67 @@
+insert:
+	
+	determine # of levels,
+	
+	find predecessor (curNode)
+	
+	
+
+
+deletion:
+
+
+FIND
+uintptr_t find(key, root, lv):	// return either node (0) or predecessor (1)
+
+// init
+slNode * curNode;
+int8_t lv;
+
+
+
+// go right:
+if key >= curNode->next[lv]->key
+	curNode = curNode->next[lv]
+	continue;
+
+
+if key == curNode->key
+	return (uintptr_t)curNode
+
+if(lv)
+{
+	lv--;
+	continue;
+}
+
+/*
+is lv needed?
+insert: need to know whether node exists, or get bottom predecessor
+*/
+
+
+
+slNode * FIND(key, root):
+slNode * INSERT(key, root):
+int8_t DELETE(key, root):
+
+
+
+
+insert:
+go all the way down, keeping track of the path
+start inserting from the bottom up
+if an insert fails
+	check that predecessor is still valid
+	update predecessor
+	try again
+things to avoid: marked next pointer, out-of-order
+
+remove:
+target = FIND();
+if target == null: return null
+mark all next pointers
+
+
+
+slNode * findPredecessor(int8_t lv, slNode * predecessors);

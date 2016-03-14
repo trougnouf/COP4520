@@ -146,7 +146,7 @@ int main()
 	printResults(&begTime);
 	
 	#if DBG_PRINTSL == 1
-	// Print the skiplist
+	// Print the skiplist (TODO use slPrint() instead)
 	slNode * tmpSLNode;
 	printf("\n");
 	for(int8_t lv = slLEVELS-1; lv >= 0; lv--)
@@ -165,7 +165,7 @@ int main()
 
 void printResults(struct timeval * begTime)
 {
-	printf("The end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
+	printf("\nThe end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
 	printf(	"Tasks breakdown (%%):\n\tinsert: %d, find: %d, remove: %d\n",
 		PERCENTINSERT, PERCENTFIND, PERCENTREMOVE);
 	printf("Skip list: %d levels.\n", slLEVELS);
