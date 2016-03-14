@@ -6,9 +6,9 @@ Change these values to generate a different test case.
 */
 
 // Used elsewhere
-#define NUMTHREADS 4		// used in handler.c
+#define NUMTHREADS 1		// used in handler.c
 #define NUMTASKS 500000*NUMTHREADS	// used in handler.c and testcase1.c
-#define slLEVELS 4		// skiplist.c
+#define slLEVELS 16		// skiplist.c
 
 // Key values
 #define MINKEY 0

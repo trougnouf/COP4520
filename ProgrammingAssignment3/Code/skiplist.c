@@ -65,6 +65,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	slNode * curNode = slHead;
 	slNode * nextNode;
 	int8_t lv;
+	int8_t started = 0;
 	
 	// Initialize new node
 	slNode * newNode = malloc(sizeof(slNode));
@@ -72,7 +73,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	newNode->key = key;
 	
 	// Go through each level
-	for(slLEVELS-1;lv>=0;lv--)
+	for(lv=slLEVELS-1;lv>=0;lv--)
 	{
 		slInserting:	// Come back without decrementing lv
 		
@@ -81,45 +82,61 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 		{
 			curNode = getPtr(curNode->next[lv]);
 		}
+		//if(curNode->next[lv] & 1)	goto slInserting;
 		nextNode = getPtr(curNode->next[lv]);
 		
 		// Duplicate found
 		if(nextNode->key == key)
 		{
 			// Insertion not started? Abort
-			if(lv >= numLv)
+			if(!started)
 			{
+				//printf("Abort\n");
 				free(newNode->next);
 				free(newNode);
 				return NULL;
 			}
+			
 			// Insertion started? Merge
 			for(;lv >= 0; lv--)
 			{
 				// Mark node for deletion
-				while(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1)
-					printf("Merge: bit stealing failed.\n");
+				if(!(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1))
+				{
+					//printf("Merge: bit stealing failed.\n");
+					// Already marked
+					//curNode = slHead; // dbg
+					goto slInserting;
+				}
 				newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
 				if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
 				{
-					printf("Merge: CAS failed.\n");
+					//printf("Merge: CAS failed (%u).\n", key);
 					// CAS failed. Reset flag and start over.
 					nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
+					//curNode = slHead; // dbg
 					goto slInserting;
 				}
 			}
+			//printf("Freeing %u\n", nextNode->key);
 			free(nextNode->next);
 			free(nextNode);
 			break;
+			
 		}
 		
 		// Insert
-		newNode->next[lv] = (uintptr_t)nextNode;
-		if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+		if(lv <= numLv)
 		{
-			// Insert failed: start over.
-			printf("Insert failed: starting over.");
-			goto slInserting;
+			newNode->next[lv] = (uintptr_t)nextNode;
+			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+			{
+				// Insert failed: start over.
+				printf("Insert failed: starting over (%u).\n", key);
+				//curNode = slHead; // dbg
+				goto slInserting;
+			}
+			started = 1;
 		}
 	}
 	if(numLv == slLEVELS-1)	return newNode;
