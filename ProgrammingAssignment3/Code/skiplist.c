@@ -77,7 +77,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	{
 		slInserting:	// Come back without decrementing lv
 
-		// Move right
+		// Move right (this crashes)
 		/*
 		while(key > getPtr(curNode->next[lv])->key)
 		{
@@ -90,7 +90,6 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 		nextNode = getPtr(curNode->next[lv]);
 		if(!nextNode)	goto slInserting;
 		// Move right until successor is found
-		//if(!nextNode)	continue;
 		if(nextNode->key < key)
 		{
 			curNode = nextNode; // do some checks? del
@@ -110,33 +109,37 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			}
 			
 			// Insertion started? Merge
-			/*
-			for(;lv >= 0; lv--)
+			
+			// Mark node for deletion
+			if(!(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1))
 			{
-				// Mark node for deletion
-				if(!(atomic_fetch_or(&(nextNode->next[lv]), 1) & 1))
-				{
-					//printf("Merge: bit stealing failed.\n");
-					// Already marked
-					//curNode = slHead; // dbg
-					goto slInserting;
-				}
-				newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
-				if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
-				{
-					//printf("Merge: CAS failed (%u).\n", key);
-					// CAS failed. Reset flag and start over.
-					//if(nextNode->next[lv]) // dbg, prob useless
-					nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
-					//curNode = slHead; // dbg
-					goto slInserting;
-				}
+				//printf("Merge: bit stealing failed.\n");
+				// Already marked
+				//curNode = slHead; // dbg
+				goto slInserting;
 			}
+			newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
+			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+			{
+				//printf("Merge: CAS failed (%u).\n", key);
+				// CAS failed. Reset flag and start over.
+				//if(nextNode->next[lv]) // dbg, prob useless
+				nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
+				//curNode = slHead; // dbg
+				goto slInserting;
+			}
+			if(lv)
+			{
+				if(lv == slLEVELS-1)
+					newNode->previous = curNode;
+				continue;
+			}
+			
 			//printf("Freeing %u\n", nextNode->key);
 			free(nextNode->next);
 			free(nextNode);
 			break;
-			*/
+			
 		}
 		
 		// Insert
