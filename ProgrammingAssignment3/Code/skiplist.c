@@ -64,7 +64,8 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	slNode * curNode = slHead;
 	slNode * nextNode;
 	int8_t lv = slLEVELS-1;
-	// Find predecessor node on current level (numLv-1)
+	// Find a predecessor node on current level (numLv-1)
+	// return NULL if key exists on lv >= numLv
 	for(;;)
 	{	
 		nextNode = getPtr(curNode->next[lv]);
@@ -115,6 +116,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	newNode->key = newKey;
 	for(;;)
 	{
+		slInsertion:
 		nextNode = getPtr(curNode->next[lv]);
 		if(!nextNode)	continue;
 		// Move right until successor is found
@@ -151,6 +153,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 			free(nextNode);
 			if(numLv == slLEVELS-1)	return newNode;
 			else	return NULL;
+		}
 		/*
 			*/
 			// duplicate node is on the right (1st found)
@@ -182,7 +185,52 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 			*/
 			//slMerge(curNode, nextNode, lv, newNode, numLv);
 			//goto endOfInsert;
+		
+		// Insert and go down (third? attempt)
+		newNode->next[lv] = (uintptr_t)nextNode;
+		while(!atomic_compare_exchange_strong(&curNode->next[lv], &nextNode, (uintptr_t)newNode))
+		{
+			// CAS failed because
+			// curNode->next is marked for deletion
+			// or
+			// curNode->next does not point to nextNode
+			
+			// Check if curNode is marked for deletion:
+			if(!curNode || curNode->next[lv] & 1)
+			{
+				printf("slInsert starting over\n");
+				// Start lv over
+				curNode = slHead;
+				goto slInsertion;
+			}
+			// Check if curnext != next
+			else if(getPtr(curNode->next[lv]) != nextNode)
+			{
+				// Update current node
+				printf("slInsert updating curNode\n");
+				while(getPtr(curNode->next[lv])->key < newKey)
+				{
+					curNode = getPtr(curNode->next[lv]);
+				}
+				nextNode = getPtr(curNode->next[lv]);
+				continue;
+			}
+			printf("\nPanic\n");
+			//printf("curNode (self/next/key): %u / %u / %u\nnextNode: %u / %u / %u\nKey: %u\nnewNode: %u / %u / %u\n");
 		}
+		
+		if(lv)
+		{	
+			if(lv == slLEVELS-1)	newNode->previous = curNode;
+			lv--;
+		}
+		else
+		{
+			if(numLv == slLEVELS-1)	return newNode;
+			else	return NULL;
+		}
+	}	
+		/*
 		// Insert and go down
 		// Mark next node
 		if(atomic_fetch_or(&(curNode->next[lv]), 1) & 1) // If failed:
@@ -223,7 +271,7 @@ slNode * slInsert(slNode * slHead, uint32_t newKey)
 	endOfInsert:
 	if(numLv == slLEVELS-1)	return newNode;
 	else	return NULL;
-	
+	*/
 	
 	/*
 	// Step 1:	Find bottom node to insert on the right of, keeping
