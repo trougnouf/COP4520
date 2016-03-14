@@ -76,14 +76,26 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 	for(lv=slLEVELS-1;lv>=0;lv--)
 	{
 		slInserting:	// Come back without decrementing lv
-		
+
 		// Move right
-		while(getPtr(curNode->next[lv])->key < key)
+		/*
+		while(key > getPtr(curNode->next[lv])->key)
 		{
 			curNode = getPtr(curNode->next[lv]);
 		}
 		//if(curNode->next[lv] & 1)	goto slInserting;
 		nextNode = getPtr(curNode->next[lv]);
+		*/
+		
+		nextNode = getPtr(curNode->next[lv]);
+		if(!nextNode)	goto slInserting;
+		// Move right until successor is found
+		//if(!nextNode)	continue;
+		if(nextNode->key < key)
+		{
+			curNode = nextNode; // do some checks? del
+			goto slInserting;
+		}
 		
 		// Duplicate found
 		if(nextNode->key == key)
@@ -98,6 +110,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			}
 			
 			// Insertion started? Merge
+			/*
 			for(;lv >= 0; lv--)
 			{
 				// Mark node for deletion
@@ -113,6 +126,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 				{
 					//printf("Merge: CAS failed (%u).\n", key);
 					// CAS failed. Reset flag and start over.
+					//if(nextNode->next[lv]) // dbg, prob useless
 					nextNode->next[lv] &= (UINTPTR_MAX ^ 1);
 					//curNode = slHead; // dbg
 					goto slInserting;
@@ -122,7 +136,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			free(nextNode->next);
 			free(nextNode);
 			break;
-			
+			*/
 		}
 		
 		// Insert
@@ -137,53 +151,12 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 				goto slInserting;
 			}
 			started = 1;
+			if(lv == slLEVELS-1)	newNode->previous = curNode;
 		}
 	}
+	
 	if(numLv == slLEVELS-1)	return newNode;
 	else	return NULL;
-}
-
-slNode * slMerge(slNode * oldNode, slNode * newNode, slNode * curNode, int8_t oldLv)
-{
-	//printf("merging\n");
-	oldNode->stopflag = 1;
-	int8_t lv = oldLv;
-	uint32_t key = newNode->key;
-	slNode * tmpNode;
-	for(;;)
-	{
-		if(getPtr(curNode->next[lv])->key < key)
-		{
-			curNode = getPtr(curNode->next[lv]);
-			continue;
-		}
-		// cas 
-		if(getPtr(curNode->next[lv])->key != key)
-			printf("slMerge: Undefined behavior.\n");
-		/*
-		try: tmp=oldnext, oldnext points to new, new points to tmp
-		then get each predecessor next to point to new (cas)
-		*/
-		tmpNode = getPtr(oldNode->next[lv]);
-		oldNode->next[lv] = (atomic_uintptr_t)newNode;
-		newNode->next[lv] = (atomic_uintptr_t)tmpNode;
-		
-		curNode->next[lv] = (atomic_uintptr_t)newNode;
-		
-		//newNode->next[lv] = oldNode->next[lv];
-		//curNode->next[lv] = (atomic_uintptr_t)newNode;
-		if(lv)
-		{
-			lv--;
-			continue;
-		}
-		else
-		{
-			free(oldNode->next);
-			free(oldNode);
-			return (oldLv==slLEVELS-1)?newNode:NULL;
-		}
-	}
 }
 
 /*
@@ -322,6 +295,7 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 }
 
 // Return a node's predecessor on any given level
+/*
 slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value)
 {
 	printf("Finding predecessor");
@@ -366,6 +340,7 @@ slNode * findPredecessor(slNode ** predecessors, uint8_t lv, uint32_t value)
 	}
 	return predecessor;
 }
+*/
 
 // Wouldn't it be nice if this was commented? }:‑)
 // Returns a number between 1 and slLEVELS
