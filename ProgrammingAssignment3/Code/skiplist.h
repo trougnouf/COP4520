@@ -28,7 +28,7 @@ log log u = 3.0346 ≅ 4
 typedef struct slNode_ {
 	uint32_t key;
 	//struct slNode_ ** next;
-	atomic_uintptr_t  * next;
+	atomic_uintptr_t * next;
 	// interact with the x-fast trie
 	struct slNode_ * previous;
 	uint8_t stopflag;

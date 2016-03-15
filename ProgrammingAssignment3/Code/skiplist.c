@@ -1,5 +1,5 @@
 #include "skiplist.h"
-#include "testcase1.h"
+#include "testcase1.h"	// optional
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,7 +7,17 @@
 #include <stdatomic.h>
 
 /*
-initialize skiplist with tail as a node
+	A fine concurrent skiplist
+	May contain shattered dreams and rainbow unicorns.
+	Not suitable for children and antelopes.
+	Side effects may include shocking hallucinations and polite howling
+	Run as follow using a recent version of GCC (>=5):
+	
+	gcc -pthread handler.c testcase1.c skiplist.c xtrie.c -std=gnu11 -O2 && ./a.out
+*/
+
+/*
+initialize skiplist with tail as a node (as opposed to a NULL pointer)
 */
 slNode * slInit()
 {
@@ -114,16 +124,6 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			slPrint(slHead);
 			#endif
 		}
-
-		// Move right (this crashes)
-		/*
-		while(key > getPtr(curNode->next[lv])->key)
-		{
-			curNode = getPtr(curNode->next[lv]);
-		}
-		//if(curNode->next[lv] & 1)	goto slInserting;
-		nextNode = getPtr(curNode->next[lv]);
-		*/
 		
 		// Move right
 		nextNode = (slNode *)(curNode->next[lv] & (UINTPTR_MAX ^ 1));
@@ -166,7 +166,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 				#endif
 				// Already marked for deletion
 				chaosmeter++;
-				continue;
+				//continue;
 				//goto slInserting;
 			}
 			
@@ -191,9 +191,7 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			}
 			if(lv)
 			{
-			
 				if(lv == slLEVELS-1)
-				
 					newNode->previous = curNode;
 				continue;
 			}
@@ -368,7 +366,7 @@ uint8_t flipcoins()
 		else		break;
 		shift<<=1;
 	}
-	return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition?
+	return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition? return results+1 should work as well.
 }
 
 // A lovely multi-level skiplist printer

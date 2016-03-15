@@ -1,0 +1,27 @@
+\subsecton( Skip list)
+The skip list is a multi-level linked-list in which the same node typically appears on multiple level. Each node is inserted on the bottom-level and has a firfty percent chance of moving up to each subsequent level. A search begins on the top-left corner of the skiplist and moves right until a greater-than-desired value is found, at which point it moves down. This process is repeated until either a matching node is found or the bottom has been reached and the next value is greater than desired. The skip list alone achieves an average O(log n) time complexity, and its performance can be increased with the use of an x-fast trie which finds the matching top-level node in O(log log M). This is especially useful when the skip list is shallow. 
+
+When a node is inserted into a four-level skip list, it has a 1/16 (1/2^4) probability of being inserted onto the top-level. This makes traditional lateral traversal extremely costly, 
+A four-level skip list 
+
+
+\subsubsection{Node:}
+struct slNode contains the following members:
+(uint32_t) key holds the value that is being saved. The maximum value is set by the MAXKEY macro, which can scale up to 2^32 and is currently set to 65536 (2^16).
+(atomic_uintptr_t) * next is a pointer to a pointer type pointing to the next slNode. It acts as a double pointer but instead points to an integer type instead of a direct pointer type, because the last bit is used as a flag to signal that the pointee is going to be removed soon, therefore the pointer would be misaligned if it were to be used with no additional processong (a bitwise operation). There are as many next "pointers" as there are levels in the skiplist, which is an arbitrary number usually between four and sixteen.
+it cannot be used directly as a pointer as it can be misaligned.
+struct slNode_ * previous is a single pointer pointing to the previous node. It is used only on the top-level of the skiplist and remains null on nodes which do not make it to the top. Its purpose is to function as the xtrie's bottom findpredecessor function.
+uint8_t stopflag is a single flag which announces that a node is in the process of being deleted. It is easy to set because each node only has one stopflag, but inconvenient to check, because these checks are performed through the compare-and-exchange using the next pointers.
+	
+	
+	Structure: The Skiplist data structure consists of a key, an optional data pointer (if the data is not the key), and a double pointer to the next node in each level of the skiplist. There is an arbitrary number of levels in the skip list (although the author suggests using log log u, or 4). The bottom (first) level of the skip list contains every key in the list, and each subsequent level contains half the number of keys present in its predecessor.
+	
+\subsubsection{Search:}
+	A search begins at the top of the top-left of the skip list (root) and proceeds to the right until either a NULL pointer or a key higher than the desired one is found. At that point, the search moves to the level below, which contains approximately twice as many keys. This process repeats until the desired key is found, or the bottom is reached and the next key is higher than desired. This method allows us to skip through most keys and results in a O(log u) search time, which remains relatively fast regardless of the amount of data stored in the structure as long as an appropriately high enough number of levels is chosen. The author suggest using 4 levels (log log u) but we found that performance is best using at least 16. The path looks like a set of uneven stairs going from the top-left to the bottom-right.
+	
+\subsubsection{Insert:}
+	Inserting a key into the skip list starts out the same way as a search, but the last node for every level is saved before descending. When the bottom is reached and the correct location is found, a new node is created, its next pointer is set to the previous node’s next pointer, and the previous node’s next pointer is set to the new node. A “coin” is tossed to determine whether the node should be inserted into the next level up, and this process is repeated on every level (until the coin returns a negative value) using the list of nodes saved while descending the list. This implementation uses a single random number (rand()) to generate all the necessary coin tosses (up to 32) using each of the single random number’s bits as a coin. The insert function returns a flag if the top-level is reached, in which case the value is to be added into the x-fast trie as well.
+
+\subsubsection{Remove:}
+	To remove from the skip list, we perform a search for the undesirable key. Once the key is found, the previous node’s next pointer is set to the undesirable node’s next pointer, and this process is repeated on for every level below. Once the pointers have been appropriately set, the memory is freed using the free() function.
+
