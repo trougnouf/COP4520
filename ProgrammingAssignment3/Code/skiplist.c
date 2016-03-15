@@ -14,6 +14,10 @@
 	Run as follow using a recent version of GCC (>=5):
 	
 	gcc -pthread handler.c testcase1.c skiplist.c xtrie.c -std=gnu11 -O2 && ./a.out
+	
+	This skip list can be used independently (skiplist.c / skiplist.h). It
+	is recommended to use a larger number of slLEVELS (16) when running 
+	without the x-fast trie.
 */
 
 /*
@@ -173,13 +177,15 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 			nextNode->stopflag = 1;
 			newNode->next[lv] = (nextNode->next[lv]) & (UINTPTR_MAX ^ 1);
 
-			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+			if(!atomic_compare_exchange_strong(&(curNode->next[lv]),
+			   &nextNode, (uintptr_t)newNode))
 			{
 				// Don't want misaligned local pointer
 				nextNode = (slNode *)((atomic_uintptr_t)nextNode&(UINTPTR_MAX ^ 1));
 			
 				#if DBG_WARNINGS >= 3
-				printf("Merge: CAS failed (cur:%u,nxt:%u, k:%u).\n", curNode->next[lv],nextNode,key);
+				printf("Merge: CAS failed (cur:%u,nxt:%u, k:%u).\n",
+				       curNode->next[lv],nextNode,key);
 				#endif
 				// CAS failed. Reset flag and start over.
 				//if(nextNode->next[lv]) // dbg, prob useless
@@ -210,13 +216,15 @@ slNode * slInsert(slNode * slHead, uint32_t key)
 
 			newNode->next[lv] = (uintptr_t)nextNode;
 			
-			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &nextNode, (uintptr_t)newNode))
+			if(!atomic_compare_exchange_strong(&(curNode->next[lv]),
+			   &nextNode, (uintptr_t)newNode))
 			{
 				// Don't want misaligned local pointer
 				nextNode = (slNode *)((atomic_uintptr_t)nextNode&(UINTPTR_MAX ^ 1));
 				// Insert failed: start over.
 				#if DBG_WARNINGS >= 3
-				printf("Insert: CAS failed (curnxt:%u,nxt:%u, k:%u).\n", curNode->next[lv],nextNode,key);
+				printf("Insert: CAS failed (curnxt:%u,nxt:%u, k:%u).\n"
+				       , curNode->next[lv],nextNode,key);
 				#endif
 				chaosmeter++;
 				goto slInserting;
@@ -254,7 +262,8 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 	for(lv = slLEVELS-1; lv >= 0; lv--)
 	{
 		slRemoving:
-		if(chaosmeter >= MAXCHAOS )
+
+		if(chaosmeter >= MAXCHAOS )	// where the fun begins
 		{
 			hopelesness++;
 			#if DBG_WARNINGS >= 2
@@ -269,8 +278,9 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 			{
 				// This is useless most of the time.
 				#if DBG_WARNINGS >= 1
-				printf("Hopelesness reached. Unmarking target's next pointer. Undefined behavior is imminent.\n:)\n");
-				printf("Looking for %u: %u (target=%u)\n", key, slFind(slHead, key), target);
+				printf("Hopelesness reached. Unmarking target's next pointers. Undefined behavior is imminent.\n:)\n");
+				printf("Looking for %u: %u (target=%u)\n", key,
+				       slFind(slHead, key), target);
 				#endif
 				target->next[lv] &= UINTPTR_MAX-1;
 				hopelesness = 0;
@@ -323,12 +333,14 @@ int8_t slRemove(slNode * slHead, uint32_t key)
 				chaosmeter++;
 				//continue;
 			}
-			if(!atomic_compare_exchange_strong(&(curNode->next[lv]), &target, target->next[lv] & (UINTPTR_MAX ^ 1)))
+			if(!atomic_compare_exchange_strong(&(curNode->next[lv]),
+			   &target, target->next[lv] & (UINTPTR_MAX ^ 1)))
 			{
 				// Don't want misaligned local pointer
 				target = (slNode *)((atomic_uintptr_t)target&(UINTPTR_MAX ^ 1));
 				#if DBG_WARNINGS >= 3
-				printf("Remove: CAS failed (curnxt:%u,nxt:%u, k:%u).\n", curNode->next[lv],nextNode,key);
+				printf("Remove: CAS failed (curnxt:%u,nxt:%u, k:%u).\n"
+				       , curNode->next[lv],nextNode,key);
 				#endif
 				// CAS failed. Reset flag and start over.
 				//if(nextNode->next[lv]) // dbg, prob useless
@@ -366,7 +378,8 @@ uint8_t flipcoins()
 		else		break;
 		shift<<=1;
 	}
-	return (result>=slLEVELS)?slLEVELS:result+1; // TODO remove redundant condition? return results+1 should work as well.
+	// TODO remove redundant condition? return results+1 should work as well.
+	return (result>=slLEVELS)?slLEVELS:result+1;
 }
 
 // A lovely multi-level skiplist printer

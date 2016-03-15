@@ -30,7 +30,8 @@ Change these values to generate a different test case.
 
 // Debugging
 #define MAXCHAOS 10	// # of restart before things happen (reset curNode, declare hopelesness, give up)
-#define DBG_PRINTSL 0	// Print SL. 0: never, 1: end, 2: when chaos happens
+#define DBG_PRINTSL 0	// Print SL. 0: never, 1: END, 2: when chaos happens
+
 #define DBG_WARNINGS 0	// 0-3. Complete failures are always announced
 #define VERBOSE 0
 /*	VERBOSE:
