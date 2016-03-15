@@ -10,11 +10,11 @@ TODO: Add x-fast trie functions to switch() statements
 #include <pthread.h>
 #include <sys/time.h>
 #include <stdatomic.h>
+#include <stdio.h>
 
 #include "handler.h"
 #include "testcase1.h"
 #include "skiplist.h"
-#include "uthash.h"
 #include "xtrie.h"
 
 
@@ -28,6 +28,7 @@ void* thread_dsHandler(void* args)
 	int8_t retStat;
 	atomic_uint tsk;	// counter
 	slNode * tmpSLNode;
+	level_hash *LSS;
 	for(;;)
 	{
 
@@ -77,8 +78,10 @@ void* thread_dsHandler(void* args)
 				printf(	"Added %d to skiplist: %u\n",
 					todolist[tsk].inData, tmpSLNode?tmpSLNode->key:0);
 				#endif
-				if(tmpSLNode)
-					;//TODO call xInsert()
+				if(tmpSLNode){
+
+					insert_x_trie(tmpSLNode->key,sharedData->LSS, tmpSLNode);
+				}
 				break;
 			case REMOVE:
 			/*
@@ -123,8 +126,7 @@ int main()
 
 	slNode * slHead = slInit();
 	x_node *root = initialize_trie();
-	x_node *LSS[17];
-	initialize_hash(LSS, root);
+	level_hash *LSS = hash_init(root, slHead);
 
 	// init Threads
 	pthread_t threads[NUMTHREADS];
@@ -132,6 +134,7 @@ int main()
 	for(uint8_t i=0; i<NUMTHREADS; i++)
 	{
 		threadData[i].slHead = slHead;
+		threadData[i].LSS = LSS;
 		threadData[i].todolist = todolist;
 		threadData[i].tsknum = &curTaskNum;
 		pthread_create(	&threads[i], NULL, thread_dsHandler,
@@ -146,10 +149,10 @@ int main()
 	printResults(&begTime);
 	
 	#if DBG_PRINTSL == 1
-	// Print the skiplist (TODO use slPrint() instead)
+	// Print the skiplist
 	slNode * tmpSLNode;
 	printf("\n");
-	for(int8_t lv = slLEVELS-1; lv >= 0; lv--)
+	/*for(int8_t lv = slLEVELS-1; lv >= 0; lv--)
 	{
 		printf("Level %u: ", lv);
 		tmpSLNode = slHead;
@@ -159,13 +162,37 @@ int main()
 			tmpSLNode = getPtr(tmpSLNode->next[lv]);
 		}
 		printf("%u\n", tmpSLNode->key);
+	}*/
+	level_hash *tst = LSS;
+	printf("Xtrie key list\n");
+	//int loop;
+	for(int loop = 0; loop<MAXKEY; loop++){
+
+		if(LSS->lvl[BASE][loop]!=NULL){
+
+			
+			printf("%u ", LSS->lvl[BASE][loop]->key);
+if(LSS->lvl[BASE][loop]->pointers[BASE] != NULL){
+				printf("prev: %u ", LSS->lvl[BASE][loop]->pointers[BASE]->key);
+			}
+			if(LSS->lvl[BASE][loop]->pointers[RIGHT] != NULL){
+				printf("succ: %u ", LSS->lvl[BASE][loop]->pointers[RIGHT]->key);
+			}
+
+
+			printf("\n");
+
+		}
+		
 	}
+	printf("\n");
+
 	#endif
 }
 
 void printResults(struct timeval * begTime)
 {
-	printf("\nThe end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
+	printf("The end.\n\tThreads: %d, tasks: %d\n", NUMTHREADS, NUMTASKS);
 	printf(	"Tasks breakdown (%%):\n\tinsert: %d, find: %d, remove: %d\n",
 		PERCENTINSERT, PERCENTFIND, PERCENTREMOVE);
 	printf("Skip list: %d levels.\n", slLEVELS);

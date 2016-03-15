@@ -22,6 +22,7 @@ typedef struct
 	atomic_uint * tsknum;
 	Task * todolist;
 	slNode * slHead;
+	level_hash *LSS;
 } pthreadData;
 
 void* thread_dsHandler(void* args);
