@@ -1,0 +1,31 @@
+typedef struct slNode_ {
+	uint32_t key;
+	atomic_uintptr_t * next;
+	struct slNode_ * previous;
+	uint8_t stopflag
+} slNode;
+
+typedef struct slNode_obsolete {
+	uint32_t key;
+	struct slNode_ ** next;
+	struct slNode_ * previous;
+} slNode;
+
+flipCoin()
+Generate one random integer
+// 255248010
+Use each bit as a coin
+// 1111001101101100011010001010
+// 1,1,1,1,0
+
+slRemove(slHead, key):
+Local pointers: curNode, target, nextNode
+
+- Find target (and its highest level), mark it for deletion
+For each level:
+  - Mark target's next pointer
+      atomic_fetch_or(&target->next[lv], 1)
+  - set curNode->next to (unmarked) target->next if curNode->next==target
+      CAS(curNode->next[lv], target, target->next[lv])
+- Free target
+    free(target->next), free(target)
