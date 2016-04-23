@@ -1,0 +1,35 @@
+11.131
+
+The index value fetched by pop() (top) is unused at the time it is fetched. This means pop() will always have to wait for two new value to be pushed before it can return anything, instead of returning whatever is on top of the stack.
+
+example:
+top = 4
+
+thread 1: push(23)
+	int i = top.getAndIncrement()
+	23 is pushed on index 4, top is now 5
+
+thread 2: pop()
+	int i = top.getAndDecrement()
+	i = 5, top is now 4, pop will wait until something is pushed to index 5
+
+This issue does not necessarily occur with concurrent programming, Bob's algorithm is broken using single-thread as well.
+
+
+If pop were to use stack[i-1], it would return a value, however, another thread executing push would then be able to overwrite the value stored on stack[i-1] before pop is able to fetch it.
+
+
+
+13.159
+
+deleting an entry pointed to by a bucket reference if we do not add a sentinel entry which is never deleted to the start of each bucket
+
+13.160
+
+14.163
+
+14.167
+
+14.168
+
+14.172

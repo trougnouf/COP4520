@@ -1,0 +1,91 @@
+%or we could just use this https://www.overleaf.com/4560944xnnxcd#/13733204/
+\documentclass[10pt,twocolumn]{article}
+\usepackage{amsthm}
+\usepackage{array}
+
+\begin{document}
+
+\title{Implementation of the Skip-Trie Concurrent Structure}
+\author{Brianne Canonico\\bcanonico@knights.ucf.edu
+\and Benoit Brummer\\self@trougnouf.com}
+\date{}
+\maketitle
+
+\begin{abstract}
+In this paper, we present an implementation of the \emph{SkipTrie}, a lock-free concurrent search structure that combines concurrent versions of the skip list, x-fast-trie, and hashtable data structures as well as a doubly-linked list, in order to guarantee linearizabiliity.
+\end{abstract}
+
+\section{Introduction}
+
+The Skip-Trie structure, first discussed by Oshman, is an attempt to merge concurrent data structures with sequention predecessor queries.  It is implemented by first inserting data into the Skip-List structure.  When the data reaches the top most level, the node is placed in a doubly-linked list of all the other top node keys.  The x-fast trie then stores the prefixes for the top level keys, and inserts them into the hashtable for each level.  As far as we, and Oshman, are aware, this is the only data structure of its type.  While there are many implementations of concurrent doubly-linked lists, concurrent hashtables, and concurrent skiplists, the combintation of those structures with a sequential predecessor search function, especially in a tree-type format, has not yet been concurrently implemented\\
+
+\emph{Atomic Operations}
+To make our implementation lock free, we used the atomic operation Compare And Swap (CAS) in order to safely swap node values across our data structures.  While Oshman uses an atomic function Compare And Delete, for the removal of some values, such as hashtable keys, we instead implemented CAS to exchange the pointer's value of the node to be deleted with NULL, thereby making the deletion safe.  Oshman also uses a Double-Compare-Single-Swap (DCSS), which takes in two variables, compares each to the variable corresponding variable they should be equivalent, such as node.prev with nodeprev to ensure it hasn't changed since the call was made, and then swaps the value of the first variable with the new desired value.  It also makes sure that the marked value, signaling the deletion of a node, was not flagged just prior to the call being made, preventing swaps to nodes still undergoing the process of deletion.  We did not use the atomic operation, simply because it is no longer supported on many systems.  Despite not using DCSS, we were able to implement the same concurrency using multiple CAS operations.  While this did not result\\
+
+
+\section{Skip list}
+The skip list is a multi-level linked-list in which the same node typically appears on multiple level. Each node is inserted on the bottom-level and has a firfty percent chance of moving up to each subsequent level. A search begins on the top-left corner of the skiplist and moves right until a greater-than-desired value is found, at which point it moves down. This process is repeated until either a matching node is found or the bottom has been reached and the next value is greater than desired. The skip list alone achieves an average O(log n) time complexity, and its performance can be increased with the use of an x-fast trie which finds the matching top-level node in O(log log M). This is especially useful when the skip list is shallow. \\
+
+When a node is inserted into a four-level skip list, it has a 1 divided by16 (one divided by to the fourth) probability of being inserted onto the top-level. This makes traditional lateral traversal extremely costly, 
+A fourlevel skip list \\
+
+
+\subsubsection{Node:}
+struct slNode contains the following members:
+(uint32t) key holds the value that is being saved. The maximum value is set by the MAXKEY macro, which can scale up to two to the 32 and is currently set to 65536 (two to the sixteenth).\\
+(atomicuintptrt) ptr next is a pointer to a pointer type pointing to the next slNode. It acts as a double pointer but instead points to an integer type instead of a direct pointer type, because the last bit is used as a flag to signal that the pointee is going to be removed soon, therefore the pointer would be misaligned if it were to be used with no additional processong (a bitwise operation). There are as many next "pointers" as there are levels in the skiplist, which is an arbitrary number usually between four and sixteen.\\
+it cannot be used directly as a pointer as it can be misaligned.
+struct slNode ptr previous is a single pointer pointing to the previous node. It is used only on the top-level of the skiplist and remains null on nodes which do not make it to the top. Its purpose is to function as the xtrie's bottom findpredecessor function.\\
+uint8t stopflag is a single flag which announces that a node is in the process of being deleted. It is easy to set because each node only has one stopflag, but inconvenient to check, because these checks are performed through the compare-and-exchange using the next pointers.
+	
+	
+\emph{Structure} The Skiplist data structure consists of a key, an optional data pointer (if the data is not the key), and a double pointer to the next node in each level of the skiplist. There is an arbitrary number of levels in the skip list (although the author suggests using log log u, or 4). The bottom (first) level of the skip list contains every key in the list, and each subsequent level contains half the number of keys present in its predecessor.
+	
+\subsection{Search}
+	A search begins at the top of the top-left of the skip list (root) and proceeds to the right until either a NULL pointer or a key higher than the desired one is found. At that point, the search moves to the level below, which contains approximately twice as many keys. This process repeats until the desired key is found, or the bottom is reached and the next key is higher than desired. This method allows us to skip through most keys and results in a O(log u) search time, which remains relatively fast regardless of the amount of data stored in the structure as long as an appropriately high enough number of levels is chosen. The author suggest using 4 levels (log log u) but we found that performance is best using at least 16. The path looks like a set of uneven stairs going from the top-left to the bottom-right.
+	
+\subsection{Insert}
+	Inserting a key into the skip list starts out the same way as a search, but the last node for every level is saved before descending. When the bottom is reached and the correct location is found, a new node is created, its next pointer is set to the previous node’s next pointer, and the previous node’s next pointer is set to the new node. A “coin” is tossed to determine whether the node should be inserted into the next level up, and this process is repeated on every level (until the coin returns a negative value) using the list of nodes saved while descending the list. This implementation uses a single random number (rand()) to generate all the necessary coin tosses (up to 32) using each of the single random number’s bits as a coin. The insert function returns a flag if the top-level is reached, in which case the value is to be added into the x-fast trie as well.
+
+\subsection{Remove}
+	To remove from the skip list, we perform a search for the undesirable key. Once the key is found, the previous node’s next pointer is set to the undesirable node’s next pointer, and this process is repeated on for every level below. Once the pointers have been appropriately set, the memory is freed using the free() function.
+
+\section{X-Fast Trie}
+The X-Fast Trie by Willard is used within the Skip-Trie for predecessor queries. The traditional structure consists of a bitwise-trie formed of key prefixes, and a level search structure, which contains a hashtable for each level that stores the prefix nodes within the corresponding trie height.  Keys and prefixes are created and stored starting with the longest bit key on the bottom, and shifting in length by 1 bit per level, where the decreased bit is a prefix of the key whos child is either in the 1 (right) or 0 (left) direction.  The prefixes are then put into the level search structure (LSS), with the bottom-most level in LSS[0], and increasingly shorter prefixes stored in increasing higher levels.  The nodes themselves point down to the prefixes immediately in the level below them unless a branch is still missing a child on the level below.  In that case, a descendant pointer goes from the childless branch, down to the largest (if the right branch is empty) or smallest (if the left branch is empty) key value in that respective branch.\\
+
+While Oshman uses the basic x-fast trie structure for storing prefixes, he doesn't use the LSS as Willard does.  Instead, he has one hashtable that stores all prefixes the prefixes for the keys in the bottom most level of the trie (which is also the top most level of the skip list).  Instead of querying keys by level, he instead queries based on the length of the prefix instead, effectively performing the same function as the levels of the LSS.  The prefix nodes themselves within the hashtable also do not point down to the node on the level immediately below them, and instead always point down to the keys in the doubly-linked list.  This helps improve concurrency, and prevents dead-end pointers. He also specfies the a specific type of hashing, Split-Ordered Hashing discussed by(), due to it its concurrency.  \\
+
+In our structure we did a combination of both Oshman's and the traditional x-fast trie.  Our structure also implements prefix nodes pointing down to the doubly-linked list like Oshman's implementation, which helps ensure progress guarantee and correctness.  We decided to implement the LSS structure as Williard did instead of the single hashtable method.  This is because our hashtable method uses fixed size arrays fit to the maximum possible prefix value per level, which the LSS then stores per level, making hashing prefixes easily accessible.  Our hashtable method is partially because our choice of programming language (c) made it difficult for us to execute a traditional hashtable concurrently without a supporting library.  Even outside libraries oftentimes did not support concurrency.  Our method allows for guaranteed O(1) hash results, since the key values being inserted are the hash values themselves, so only the level needs to be known.
+
+\subsection{Correctness Condition and Linearizability}
+For the hashtable, we are easily able to show the linearizability and correctness conditions.\\
+\begin{proof}
+Our correctness conditions for the level search structure are: 
+1) A successful Compare And Swap when a key not yet inserted into the hashtable, inserts its key node into the doubly-linked list
+
+2)An unsuccessful Compare And Swap when a key already in the hash table attempts to insert its node and is prevented, or when find is trying to find a value that is not in the table
+
+3)A succecssful Compare And Swap when find searches for a key value in the corresponding hashtable and is returned the corresponding node
+
+4)A successful Compare And Swap where a key to be deleted swaps in the null ptr and removes itself from the table
+
+We can say that all insertions and deletions and queries into the level search structure are correctly linearized each time as compare-and-swap operation is perfomed since the operations performed on the hash table can be guaranteed return a value that is not being altered by another function.
+\end{proof}
+For the xtrie, we can also prove the linearizability and correctness conditions for our algorithms for the inserton and deletion of prefixes 
+\begin{proof}
+1) A prefix p of a key x can only be inserted into the x-trie by a key for which it is a prefix of, ensuring that its child pointers will always be predecessor or successor for nodes with the same common prefix
+2) A successful insert of prefix will only result in pointing down to a key for which it is a prefix for, and that is not yet in the hashtable
+3)A successful adjustment of prefix can only be done by a key it is a prefix for, since other keys are not able to reach access it
+4) A successful delete can only be done by a key the node is a prefix for, and will not cause any lost pointers, since it is never pointed to by anything.
+\end{proof} 
+
+\section{Thoughts}
+While our implementation of the Skip Trie did remain lock-free and concurrent, we were not able to create a linearizable data structure as Oshman's proof suggested.  One of our biggest struggles was implementing a lock-free flag variable for us to mark nodes as deleted, or as ready when they were fully inserted.  This was difficult due to the limited atomic C library, where the only lock-free guaranteed variable was atomicflag, but the value changing on every read made it difficult to implement.  It also provided very limited atomic operations - many instances of CAS would have been better accomplished under using an Compare-And-Set. For our flag, we ending up opting for marking the first bit of the next pointer to indicate a node was to be deleted, but this also proved difficult due to faults caused by misalignments in memory we didn't catch early on.  Another struggle stemmed from trying to create a more memory efficient concurrent hash table without a helper library.  
+
+While we did face obstacles, there are some implementations of our algorithm we believe improved on the structure.  The main one being the succesful use of CAS without DCSS, which makes our algorithm much more implementable compared to Oshman's algorithms using DCSS.   
+
+
+\bibliography{testbib}
+\bibliographystyle{ieeetr}
+
+\end{document}
